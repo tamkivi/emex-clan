@@ -4,142 +4,94 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>1stopshop – Tere tulemast → Kodu → Teated/Ostukorv</title>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card: #111827;
-      --muted: #94a3b8;
-      --text: #e5e7eb;
-      --accent: #22d3ee;
-      --accent-2: #a78bfa;
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, sans-serif;
-      color: var(--text);
-      background: radial-gradient(1000px 600px at 80% -10%, rgba(167,139,250,.15), transparent),
-                  radial-gradient(800px 500px at -10% 110%, rgba(34,211,238,.14), transparent),
-                  var(--bg);
-    }
-
-    .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
-    .view { display: none; opacity: 0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; }
-    .view.active { display: block; opacity: 1; transform: translateY(0); }
-
-    .welcome { min-height: 100dvh; display: grid; place-items: center; text-align: center; padding: 32px; }
-    .welcome-card {
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 20px; padding: 40px 28px; box-shadow: 0 10px 40px rgba(0,0,0,.35);
-      backdrop-filter: blur(8px);
-    }
-    .welcome h1 { font-size: clamp(32px, 5vw, 56px); margin: 0 0 10px; }
-    .welcome p { color: var(--muted); margin: 0 0 24px; }
-    .btn {
-      display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px;
-      border-radius: 12px; border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(34,211,238,.18), rgba(167,139,250,.18));
-      color: white; font-weight: 600; cursor: pointer; text-decoration: none;
-      transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
-    }
-    .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,.35); }
-
-    .home .header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 24px 0 18px; }
-    .logo { font-weight: 800; letter-spacing: .3px; }
-    .logo i { font-style: normal; color: var(--accent); }
-
-    .shop-title { text-align: center; font-size: 2rem; font-weight: 800; color: var(--accent); margin: 10px 0 20px; }
-
-    .scroll-gallery {
-      display: flex;
-      overflow: hidden;
-      gap: 12px;
-      padding: 10px 0 20px;
-      position: relative;
-    }
-    .scroll-gallery img {
-      width: 180px;
-      height: 120px;
-      border-radius: 12px;
-      flex-shrink: 0;
-      animation: scrollGallery 20s linear infinite;
-    }
-    @keyframes scrollGallery {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-    .card { background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015)); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 18px; min-height: 200px; position: relative; overflow: hidden; cursor: pointer; transition: transform .15s ease, border-color .2s ease, box-shadow .2s ease; }
-    .card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.16); box-shadow: 0 10px 24px rgba(0,0,0,.25); }
-    .card h3 { margin: 8px 0 6px; }
-    .card p { margin: 0; color: var(--muted); font-size: .95rem; }
-    .badge { position: absolute; top: 12px; right: 12px; padding: 4px 8px; border-radius: 999px; font-size: .8rem; background: rgba(34,211,238,.15); border: 1px solid rgba(34,211,238,.35); }
-    .card img { width: 100%; border-radius: 12px; margin-bottom: 10px; }
-
-    .subhead { display: flex; align-items: center; gap: 12px; margin: 18px 0 12px; }
-    .back { border: 1px solid rgba(255,255,255,.12); background: transparent; color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
-    .list { display: grid; gap: 12px; }
-    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; background: rgba(255,255,255,.02); }
-    .price { color: var(--accent); font-weight: 700; }
-    footer { color: var(--muted); font-size: .9rem; text-align: center; padding: 24px; }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="theme-dark">
   <section id="view-welcome" class="view welcome active">
     <div class="welcome-card">
       <h1>Tere tulemast <span style="color: var(--accent)">1stopshopi</span> 👋</h1>
       <p>Kiire, lihtne ja kõik ühest kohast. Laen avalehe...</p>
-      <a class="btn" id="enterBtn" href="#">Alusta kohe</a>
     </div>
   </section>
 
   <main id="view-home" class="view home">
     <div class="container">
-      <div class="header">
-        <div class="logo">1stop<i>shop</i></div>
-        <div style="opacity:.8">✨ Sügisene soodukas</div>
+      <div class="sticky-header">
+        <div class="header">
+          <div class="logo">1stop<i>shop</i></div>
+          <div class="header-meta">
+            <div class="headline-tag">✨ Sügisene soodukas</div>
+            <div class="header-actions">
+              <button class="icon-btn" type="button" aria-label="Seaded" title="Seaded" id="settingsBtn">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M10.7 3.3a1.5 1.5 0 0 1 2.6 0l.78 1.62a1.5 1.5 0 0 0 1.05.82l1.78.35a1.5 1.5 0 0 1 .78 2.51l-1.2 1.28a1.5 1.5 0 0 0 0 2.04l1.2 1.28a1.5 1.5 0 0 1-.78 2.51l-1.78.35a1.5 1.5 0 0 0-1.05.82l-.78 1.62a1.5 1.5 0 0 1-2.6 0l-.78-1.62a1.5 1.5 0 0 0-1.05-.82l-1.78-.35a1.5 1.5 0 0 1-.78-2.51l1.2-1.28a1.5 1.5 0 0 0 0-2.04l-1.2-1.28a1.5 1.5 0 0 1 .78-2.51l1.78-.35a1.5 1.5 0 0 0 1.05-.82z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+              <button class="icon-btn" type="button" aria-label="Teated" title="Teated" id="notificationsBtn">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M15 17h5l-1.35-1.35A2 2 0 0 1 18 14.22V11a6 6 0 0 0-5-5.91V4a1 1 0 0 0-2 0v1.09A6 6 0 0 0 6 11v3.22a2 2 0 0 1-.65 1.43L4 17h5"></path>
+                  <path d="M9 17a3 3 0 0 0 6 0"></path>
+                </svg>
+              </button>
+              <button class="icon-btn" type="button" aria-label="Ostukorv" title="Ostukorv" id="cartBtn">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 6h15l-1.5 9h-13z"></path>
+                  <path d="M6 6l-1-2H3"></path>
+                  <circle cx="9" cy="20" r="1.5"></circle>
+                  <circle cx="18" cy="20" r="1.5"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="shop-title">1stopshop</div>
-      <div class="scroll-gallery">
-        <img src="https://picsum.photos/seed/a/300/150" alt="product1">
-        <img src="https://picsum.photos/seed/b/300/150" alt="product2">
-        <img src="https://picsum.photos/seed/c/300/150" alt="product3">
-        <img src="https://picsum.photos/seed/d/300/150" alt="product4">
-        <img src="https://picsum.photos/seed/e/300/150" alt="product5">
-      </div>
+      <section class="home-panel hero">
+        <div class="home-hero">
+          <div class="shop-title">1stopshop</div>
+          <p class="lead">Kiire, lihtne ja kõik ühest kohast.</p>
+        </div>
+      </section>
 
-      <div class="grid">
-        <article class="card" id="open-teated">
-          <div class="badge">3</div>
-          <img src="https://picsum.photos/300/150?random=1" alt="Teated pilt">
-          <h3>Teated</h3>
-          <p>Tellimuse olekud ja pakkumised</p>
-        </article>
+            <section class="home-panel gallery">
+        <div class="scroll-gallery">
+          <img src="assets/img/workspace.svg" alt="Töökoha seade">
+          <img src="assets/img/gadgets.svg" alt="Gadget valik">
+          <img src="assets/img/shopping.svg" alt="Ostukogemus">
+          <img src="assets/img/electronics.svg" alt="Elektroonika lett">
+          <img src="assets/img/homeoffice.svg" alt="Kodukontori tarvikud">
+        </div>
+      </section>
 
-        <article class="card" id="open-ostukorv">
-          <div class="badge">2</div>
-          <img src="https://picsum.photos/300/150?random=2" alt="Ostukorv pilt">
-          <h3>Ostukorv</h3>
-          <p>Vaata ja kinnita oma ostud</p>
-        </article>
+      <section class="home-panel categories">
+        <div class="category-header">
+          <div>
+            <h2>Tootekategooriad</h2>
+            <p class="category-subtitle">Sirvi populaarseid valdkondi ja leia oma lemmikud.</p>
+          </div>
+          <button class="btn" id="viewCartShortcut">Ava ostukorv</button>
+        </div>
+        <div class="category-list" id="categoryList"></div>
+      </section>
 
-        <article class="card">
-          <img src="https://picsum.photos/300/150?random=3" alt="Uued tooted">
-          <h3>Uued tooted</h3>
-          <p>Värskelt lisatud kategooriad</p>
-        </article>
+      <section class="home-panel samples">
+        <div class="samples-header">
+          <h2>Näidistooted</h2>
+          <span class="samples-tag">Soovitused sulle</span>
+        </div>
+        <div class="sample-list" id="featuredList"></div>
+      </section>
+      <section class="home-panel admin-invite">
+        <div class="admin-invite__content">
+          <div>
+            <h2>Administratiivne ülevaade</h2>
+            <p class="category-subtitle">Hallake toodete kataloogi ja vaadake poe hetkeolukorda.</p>
+          </div>
+          <button class="btn" id="openAdmin">Ava demo haldusvaade</button>
+        </div>
+      </section>
 
-        <article class="card">
-          <img src="https://picsum.photos/300/150?random=4" alt="Populaarsed">
-          <h3>Populaarsed</h3>
-          <p>Nädala lemmikud</p>
-        </article>
-      </div>
     </div>
   </main>
 
@@ -162,51 +114,211 @@
         <button class="back" data-back>← Tagasi</button>
         <h2>Sinu ostukorv</h2>
       </div>
-      <div class="list">
-        <div class="row"><div><strong>Mehaaniline klaviatuur</strong></div><span class="price">79,00 €</span></div>
-        <div class="row"><div><strong>Hiirematt XL</strong></div><span class="price">19,90 €</span></div>
-        <div class="row" style="justify-content:flex-end"><strong>Kokku:</strong> <span class="price">98,90 €</span></div>
-        <div class="row" style="justify-content:flex-end"><button class="btn" id="checkout">Mine maksma</button></div>
+      <div class="cart-area">
+        <div class="list" id="cartList"></div>
+        <div class="cart-summary">
+          <div class="row total-row">
+            <div><strong>Kokku:</strong></div>
+            <span class="price" id="cartTotal">0,00 €</span>
+          </div>
+          <div class="cart-actions">
+            <button class="btn" id="checkout">Mine maksma</button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
+  <section id="view-settings" class="view">
+    <div class="container">
+      <div class="subhead">
+        <button class="back" data-back>← Tagasi</button>
+        <h2>Seaded</h2>
+      </div>
+      <div class="settings-layout">
+        <article class="settings-card">
+          <h3>Profiili ülevaade</h3>
+          <div class="profile-overview">
+            <p><strong id="profileEmail">demo@1stopshop.ee</strong></p>
+            <p class="settings-hint" id="profileLoginInfo">Viimati sisse logitud: 23. märts 2025, 14:32 (Tallinn)</p>
+            <button class="btn" id="sendLoginLink" type="button">Saada uus sisselogimislink</button>
+          </div>
+        </article>
+
+        <article class="settings-card">
+          <h3>Kontohaldus</h3>
+          <form id="accountForm" class="settings-form">
+            <div class="form-field">
+              <label for="settingsPassword">Uus parool</label>
+              <input id="settingsPassword" name="password" type="password" placeholder="••••••••">
+            </div>
+            <div class="form-field">
+              <label for="settingsPasswordConfirm">Kinnita parool</label>
+              <input id="settingsPasswordConfirm" name="confirm" type="password" placeholder="••••••••">
+            </div>
+            <div class="form-field inline">
+              <label>
+                <input type="checkbox" id="settings2fa">
+                Luba kaksikautentimine
+              </label>
+            </div>
+            <div class="form-field inline">
+              <label>
+                <input type="checkbox" id="settingsSessionAlerts">
+                Teavita uutest seadmetest
+              </label>
+            </div>
+            <button class="btn" type="submit">Salvesta</button>
+          <datalist id="categoryOptions"></datalist>
+          </form>
+        </article>
+
+        <article class="settings-card">
+          <h3>Eelistused</h3>
+          <form id="preferencesForm" class="settings-form">
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="settingsLocation">Asukoht</label>
+                <select id="settingsLocation" name="location">
+                  <option value="Tallinn, Eesti">Tallinn, Eesti</option>
+                  <option value="Tartu, Eesti">Tartu, Eesti</option>
+                  <option value="Helsingi, Soome">Helsingi, Soome</option>
+                  <option value="Riia, Läti">Riia, Läti</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="settingsCurrency">Valuuta</label>
+                <select id="settingsCurrency" name="currency">
+                  <option value="EUR">EUR (€)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="SEK">SEK (kr)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field inline">
+              <label>
+                <input type="checkbox" id="settingsAdult">
+                Kuvan 18+ toodete soovitusi
+              </label>
+            </div>
+            <div class="form-field">
+              <label>Värviteema</label>
+              <div class="theme-toggle">
+                <label><input type="radio" name="theme" value="light"> Hele</label>
+                <label><input type="radio" name="theme" value="dark" checked> Tume</label>
+              </div>
+            </div>
+            <button class="btn" type="submit">Salvesta eelistused</button>
+          </form>
+          <p class="settings-hint">Muudatused rakenduvad kohe pärast salvestamist.</p>
+        </article>
+
+        <article class="settings-card">
+          <h3>Tugi & turvalisus</h3>
+          <div class="support-grid">
+            <button class="btn" type="button" id="openHelp">Ava KKK</button>
+            <button class="btn" type="button" id="reportIssue">Teavita probleemist</button>
+          </div>
+          <p class="settings-hint">24/7 klienditugi: support@1stopshop.ee või +372 600 1234.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="view-admin" class="view">
+    <div class="container">
+      <div class="subhead">
+        <button class="back" data-back>← Tagasi</button>
+        <h2>Haldusvaade</h2>
+      </div>
+      <div class="admin-layout">
+        <article class="admin-card">
+          <h3>Lisa uus toode</h3>
+          <form id="adminProductForm" class="admin-form">
+            <div class="form-field">
+              <label for="adminProductName">Nimi</label>
+              <input id="adminProductName" name="name" type="text" placeholder="Toote nimi" required>
+            </div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="adminProductPrice">Hind (€)</label>
+                <input id="adminProductPrice" name="price" type="number" min="0" step="0.01" placeholder="0.00" required>
+              </div>
+              <div class="form-field">
+                <label for="adminProductCategory">Kategooria</label>
+                <input id="adminProductCategory" name="category" type="text" list="categoryOptions" placeholder="nt. Toit" required>
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="adminProductImage">Pildi failitee (SVG/PNG)</label>
+              <input id="adminProductImage" name="image" type="text" placeholder="assets/img/uus-toode.svg" required>
+            </div>
+            <div class="form-field">
+              <label for="adminProductDescription">Kirjeldus</label>
+              <textarea id="adminProductDescription" name="description" rows="3" placeholder="Lühike kirjeldus" required></textarea>
+            </div>
+            <div class="form-field inline">
+              <label>
+                <input type="checkbox" name="featured" id="adminProductFeatured">
+                Lisa näidistoodete hulka
+              </label>
+            </div>
+            <button class="btn" type="submit">Salvesta toode</button>
+            <datalist id="categoryOptions"></datalist>
+          </form>
+        </article>
+        <article class="admin-card">
+          <h3>Poe statistika</h3>
+          <div class="stats-grid" id="adminStats">
+            <div class="stat">
+              <span class="stat-label">Tooteid kokku</span>
+              <strong class="stat-value" id="statsProducts">0</strong>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Kategooriaid</span>
+              <strong class="stat-value" id="statsCategories">0</strong>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Ostukorvis</span>
+              <strong class="stat-value" id="statsCartItems">0</strong>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Külastajad (demo)</span>
+              <strong class="stat-value">1 248</strong>
+            </div>
+          </div>
+          <div class="admin-table">
+            <div class="admin-table__head">
+              <span>Nimi</span>
+              <span>Kategooria</span>
+              <span>Hind</span>
+              <span></span>
+            </div>
+            <div class="admin-table__body" id="adminProductTable"></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div id="productModal" class="product-modal" aria-hidden="true">
+    <div class="product-modal__overlay" data-modal-dismiss></div>
+    <div class="product-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="productModalTitle" tabindex="-1">
+      <button class="product-modal__close" type="button" aria-label="Sulge" data-modal-dismiss>×</button>
+      <img id="productModalImage" class="product-modal__image" alt="" />
+      <div class="product-modal__body">
+        <h3 id="productModalTitle"></h3>
+        <p class="product-modal__price" id="productModalPrice"></p>
+        <p class="product-modal__description" id="productModalDescription"></p>
+        <button class="btn product-modal__action" type="button" id="productModalAdd">Lisa ostukorvi</button>
+      </div>
+    </div>
+  </div>
+
   <footer><small>© 2025 1stopshop • mockup</small></footer>
 
-  <script>
-    const views = {
-      welcome: document.getElementById('view-welcome'),
-      home: document.getElementById('view-home'),
-      teated: document.getElementById('view-teated'),
-      ostukorv: document.getElementById('view-ostukorv'),
-    };
-
-    function showView(name) {
-      Object.values(views).forEach(v => v.classList.remove('active'));
-      (views[name] ?? views.home).classList.add('active');
-    }
-
-    let welcomeTimeout;
-    function startFlow() {
-      showView('welcome');
-      clearTimeout(welcomeTimeout);
-      welcomeTimeout = setTimeout(() => showView('home'), 1800);
-    }
-
-    document.getElementById('enterBtn').addEventListener('click', e => {
-      e.preventDefault();
-      clearTimeout(welcomeTimeout);
-      showView('home');
-    });
-
-    document.getElementById('open-teated').addEventListener('click', () => showView('teated'));
-    document.getElementById('open-ostukorv').addEventListener('click', () => showView('ostukorv'));
-    document.querySelectorAll('[data-back]').forEach(btn => btn.addEventListener('click', () => showView('home')));
-
-    const checkout = document.getElementById('checkout');
-    if (checkout) checkout.addEventListener('click', () => alert('Demo: maksevoog ei ole ühendatud.'));
-
-    window.addEventListener('DOMContentLoaded', startFlow);
-  </script>
+  <script src="app.js" defer></script>
 </body>
 </html>
