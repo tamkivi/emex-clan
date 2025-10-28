@@ -41,6 +41,7 @@ const els = {
   settingsBtn: document.getElementById('settingsBtn'),
   notificationsBtn: document.getElementById('notificationsBtn'),
   cartBtn: document.getElementById('cartBtn'),
+  quickActionsPanel: document.getElementById('quickActionsPanel'),
 };
 
 const currencyInfo = {
@@ -290,6 +291,10 @@ function createQuickCard({ id, title, description, image, badge, action }) {
 }
 
 function renderQuickActions() {
+  const container = els.quickActionsPanel;
+  if (!container) return;
+  container.innerHTML = '';
+
   const section = document.createElement('div');
   section.className = 'category-section quick-actions';
 
@@ -328,14 +333,14 @@ function renderQuickActions() {
   );
 
   section.append(grid);
-  return section;
+  container.append(section);
+  updateQuickActionCartBadge();
 }
 
 function renderCategories() {
   const container = els.categoryList;
   if (!container) return;
   container.innerHTML = '';
-  container.append(renderQuickActions());
 
   const categories = getCategories();
   const categoryOrder = [
@@ -509,7 +514,7 @@ function renderCart() {
 }
 
 function updateQuickActionCartBadge() {
-  const quickCard = els.categoryList?.querySelector('[data-quick-card="cart"]');
+  const quickCard = els.quickActionsPanel?.querySelector('[data-quick-card="cart"]');
   if (!quickCard) return;
   let badge = quickCard.querySelector('.badge');
   const count = getCartCount();
@@ -556,6 +561,7 @@ function renderAdminTable() {
 
 function renderEverything() {
   renderCategoryOptions();
+  renderQuickActions();
   renderCategories();
   renderFeatured();
   renderCart();
