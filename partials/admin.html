@@ -1,0 +1,75 @@
+<section id="view-admin" class="view">
+  <div class="container">
+    <div class="subhead">
+      <button class="back" data-back>← Tagasi</button>
+      <h2>Haldusvaade</h2>
+    </div>
+    <div class="admin-layout">
+      <article class="admin-card">
+        <h3>Lisa uus toode</h3>
+        <form id="adminProductForm" class="admin-form">
+          <div class="form-field">
+            <label for="adminProductName">Nimi</label>
+            <input id="adminProductName" name="name" type="text" placeholder="Toote nimi" required>
+          </div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="adminProductPrice">Hind (€)</label>
+              <input id="adminProductPrice" name="price" type="number" min="0" step="0.01" placeholder="0.00" required>
+            </div>
+            <div class="form-field">
+              <label for="adminProductCategory">Kategooria</label>
+              <input id="adminProductCategory" name="category" type="text" list="categoryOptions" placeholder="nt. Toit" required>
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="adminProductImage">Pildi failitee (SVG/PNG)</label>
+            <input id="adminProductImage" name="image" type="text" placeholder="assets/img/uus-toode.svg" required>
+          </div>
+          <div class="form-field">
+            <label for="adminProductDescription">Kirjeldus</label>
+            <textarea id="adminProductDescription" name="description" rows="3" placeholder="Lühike kirjeldus" required></textarea>
+          </div>
+          <div class="form-field inline">
+            <label>
+              <input type="checkbox" name="featured" id="adminProductFeatured">
+              Lisa näidistoodete hulka
+            </label>
+          </div>
+          <button class="btn" type="submit">Salvesta toode</button>
+          <datalist id="categoryOptions"></datalist>
+        </form>
+      </article>
+      <article class="admin-card">
+        <h3>Poe statistika</h3>
+        <div class="stats-grid" id="adminStats">
+          <div class="stat">
+            <span class="stat-label">Tooteid kokku</span>
+            <strong class="stat-value" id="statsProducts">0</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Kategooriaid</span>
+            <strong class="stat-value" id="statsCategories">0</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Ostukorvis</span>
+            <strong class="stat-value" id="statsCartItems">0</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Külastajad (demo)</span>
+            <strong class="stat-value">1 248</strong>
+          </div>
+        </div>
+        <div class="admin-table">
+          <div class="admin-table__head">
+            <span>Nimi</span>
+            <span>Kategooria</span>
+            <span>Hind</span>
+            <span></span>
+          </div>
+          <div class="admin-table__body" id="adminProductTable"></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

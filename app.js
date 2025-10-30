@@ -1,48 +1,6 @@
 const bodyEl = document.body;
-const views = {
-  welcome: document.getElementById('view-welcome'),
-  home: document.getElementById('view-home'),
-  teated: document.getElementById('view-teated'),
-  ostukorv: document.getElementById('view-ostukorv'),
-  settings: document.getElementById('view-settings'),
-  admin: document.getElementById('view-admin'),
-};
-
-const els = {
-  categoryList: document.getElementById('categoryList'),
-  featuredList: document.getElementById('featuredList'),
-  cartList: document.getElementById('cartList'),
-  cartTotal: document.getElementById('cartTotal'),
-  productModal: document.getElementById('productModal'),
-  productModalTitle: document.getElementById('productModalTitle'),
-  productModalPrice: document.getElementById('productModalPrice'),
-  productModalDescription: document.getElementById('productModalDescription'),
-  productModalImage: document.getElementById('productModalImage'),
-  productModalAdd: document.getElementById('productModalAdd'),
-  adminProductForm: document.getElementById('adminProductForm'),
-  adminProductTable: document.getElementById('adminProductTable'),
-  statsProducts: document.getElementById('statsProducts'),
-  statsCategories: document.getElementById('statsCategories'),
-  statsCartItems: document.getElementById('statsCartItems'),
-  accountForm: document.getElementById('accountForm'),
-  preferencesForm: document.getElementById('preferencesForm'),
-  settingsLocation: document.getElementById('settingsLocation'),
-  settingsCurrency: document.getElementById('settingsCurrency'),
-  settingsAdult: document.getElementById('settingsAdult'),
-  settings2fa: document.getElementById('settings2fa'),
-  settingsSessionAlerts: document.getElementById('settingsSessionAlerts'),
-  themeRadios: document.querySelectorAll('input[name="theme"]'),
-  viewCartShortcut: document.getElementById('viewCartShortcut'),
-  openAdmin: document.getElementById('openAdmin'),
-  sendLoginLink: document.getElementById('sendLoginLink'),
-  openHelp: document.getElementById('openHelp'),
-  reportIssue: document.getElementById('reportIssue'),
-  categoryOptions: document.getElementById('categoryOptions'),
-  settingsBtn: document.getElementById('settingsBtn'),
-  notificationsBtn: document.getElementById('notificationsBtn'),
-  cartBtn: document.getElementById('cartBtn'),
-  quickActionsPanel: document.getElementById('quickActionsPanel'),
-};
+const views = {};
+const els = {};
 
 const currencyInfo = {
   EUR: { symbol: '€', rate: 1, locale: 'et-EE', currency: 'EUR' },
@@ -140,6 +98,49 @@ const initialProducts = [
     image: 'https://source.unsplash.com/600x600/?deodorant',
   },
 ];
+
+function cacheDom() {
+  views.welcome = document.getElementById('view-welcome');
+  views.home = document.getElementById('view-home');
+  views.teated = document.getElementById('view-teated');
+  views.ostukorv = document.getElementById('view-ostukorv');
+  views.settings = document.getElementById('view-settings');
+  views.admin = document.getElementById('view-admin');
+
+  els.categoryList = document.getElementById('categoryList');
+  els.featuredList = document.getElementById('featuredList');
+  els.cartList = document.getElementById('cartList');
+  els.cartTotal = document.getElementById('cartTotal');
+  els.productModal = document.getElementById('productModal');
+  els.productModalTitle = document.getElementById('productModalTitle');
+  els.productModalPrice = document.getElementById('productModalPrice');
+  els.productModalDescription = document.getElementById('productModalDescription');
+  els.productModalImage = document.getElementById('productModalImage');
+  els.productModalAdd = document.getElementById('productModalAdd');
+  els.adminProductForm = document.getElementById('adminProductForm');
+  els.adminProductTable = document.getElementById('adminProductTable');
+  els.statsProducts = document.getElementById('statsProducts');
+  els.statsCategories = document.getElementById('statsCategories');
+  els.statsCartItems = document.getElementById('statsCartItems');
+  els.accountForm = document.getElementById('accountForm');
+  els.preferencesForm = document.getElementById('preferencesForm');
+  els.settingsLocation = document.getElementById('settingsLocation');
+  els.settingsCurrency = document.getElementById('settingsCurrency');
+  els.settingsAdult = document.getElementById('settingsAdult');
+  els.settings2fa = document.getElementById('settings2fa');
+  els.settingsSessionAlerts = document.getElementById('settingsSessionAlerts');
+  els.themeRadios = document.querySelectorAll('input[name="theme"]');
+  els.viewCartShortcut = document.getElementById('viewCartShortcut');
+  els.openAdmin = document.getElementById('openAdmin');
+  els.sendLoginLink = document.getElementById('sendLoginLink');
+  els.openHelp = document.getElementById('openHelp');
+  els.reportIssue = document.getElementById('reportIssue');
+  els.categoryOptions = document.getElementById('categoryOptions');
+  els.settingsBtn = document.getElementById('settingsBtn');
+  els.notificationsBtn = document.getElementById('notificationsBtn');
+  els.cartBtn = document.getElementById('cartBtn');
+  els.quickActionsPanel = document.getElementById('quickActionsPanel');
+}
 
 const storedPreferences = {
   theme: localStorage.getItem('theme'),
@@ -571,7 +572,8 @@ function renderEverything() {
 
 function showView(name) {
   Object.values(views).forEach((view) => view?.classList.remove('active'));
-  const target = views[name] || views.home;
+  const target = views[name] ?? views.home;
+  if (!target) return;
   target.classList.add('active');
   if (name === 'ostukorv') {
     renderCart();
@@ -807,6 +809,7 @@ function startFlow() {
 }
 
 function initialise() {
+  cacheDom();
   applyTheme();
   populatePreferenceControls();
   renderEverything();
@@ -814,4 +817,20 @@ function initialise() {
   startFlow();
 }
 
-document.addEventListener('DOMContentLoaded', initialise);
+async function boot() {
+  if (document.readyState === 'loading') {
+    await new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
+  }
+
+  if (window.loadPartialsPromise) {
+    await window.loadPartialsPromise;
+  } else {
+    console.warn('loadPartialsPromise missing; partial templates may not be loaded.');
+  }
+
+  initialise();
+}
+
+boot().catch((error) => {
+  console.error('Failed to initialise application', error);
+});
