@@ -1,6 +1,9 @@
 const bodyEl = document.body;
 const views = {};
 const els = {};
+const firebaseProductsService = typeof window !== 'undefined' ? window.firebaseProducts || null : null;
+let firebaseProductsReady = false;
+let unsubscribeProductListener = null;
 
 const currencyInfo = {
   EUR: { symbol: '€', rate: 1, locale: 'et-EE', currency: 'EUR' },
@@ -142,6 +145,34 @@ function cacheDom() {
   els.quickActionsPanel = document.getElementById('quickActionsPanel');
 }
 
+function normaliseProduct(product = {}) {
+  const priceNumber = Number(product.price);
+  return {
+    id: product.id || `product-${Date.now()}`,
+    name: product.name || 'Uus toode',
+    price: Number.isFinite(priceNumber) ? priceNumber : 0,
+    category: product.category || 'Määramata',
+    description: product.description || '',
+    image: product.image || 'https://source.unsplash.com/600x600/?product',
+    featured: Boolean(product.featured),
+    adult: Boolean(product.adult),
+  };
+}
+
+function normaliseProducts(list = []) {
+  return list.map((product) => normaliseProduct(product));
+}
+
+function useLocalProducts() {
+  if (typeof unsubscribeProductListener === 'function') {
+    unsubscribeProductListener();
+    unsubscribeProductListener = null;
+  }
+  firebaseProductsReady = false;
+  state.products = normaliseProducts(initialProducts);
+  renderEverything();
+}
+
 const storedPreferences = {
   theme: localStorage.getItem('theme'),
   location: localStorage.getItem('location'),
@@ -167,7 +198,7 @@ const state = {
       return [];
     }
   })(),
-  products: [...initialProducts],
+  products: [],
 };
 
 let activeProductId = null;
@@ -570,6 +601,31 @@ function renderEverything() {
   renderAdminTable();
 }
 
+async function setupProductSync() {
+  if (!firebaseProductsService) {
+    useLocalProducts();
+    return;
+  }
+  try {
+    await firebaseProductsService.init();
+    await firebaseProductsService.seedDemoProducts(initialProducts).catch((seedError) => {
+      console.warn('Demo products were not seeded', seedError);
+    });
+    if (typeof unsubscribeProductListener === 'function') {
+      unsubscribeProductListener();
+      unsubscribeProductListener = null;
+    }
+    unsubscribeProductListener = await firebaseProductsService.subscribeToProducts((products) => {
+      state.products = normaliseProducts(products);
+      renderEverything();
+    });
+    firebaseProductsReady = true;
+  } catch (error) {
+    console.error('Firebase product sync unavailable, falling back to local data', error);
+    useLocalProducts();
+  }
+}
+
 function showView(name) {
   Object.values(views).forEach((view) => view?.classList.remove('active'));
   const target = views[name] ?? views.home;
@@ -641,7 +697,7 @@ function removeFromCart(productId) {
   renderStats();
 }
 
-function removeProduct(productId) {
+function removeProductLocal(productId) {
   state.products = state.products.filter((product) => product.id !== productId);
   state.cart = state.cart.filter((item) => item.id !== productId);
   persistCart();
@@ -770,34 +826,61 @@ function bindUI() {
   els.openHelp?.addEventListener('click', () => window.alert('Avaksime KKK lehe (demo).'));
   els.reportIssue?.addEventListener('click', () => window.alert('Täname tagasiside eest! (demo)'));
 
-  els.adminProductForm?.addEventListener('submit', (event) => {
+  els.adminProductForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(els.adminProductForm);
     const name = (formData.get('name') || '').toString().trim();
-    const price = Number(formData.get('price'));
+    const priceValue = Number(formData.get('price'));
     const category = (formData.get('category') || '').toString().trim() || 'Määramata';
     const image = (formData.get('image') || '').toString().trim() || 'https://source.unsplash.com/600x600/?new%20product';
     const description = (formData.get('description') || '').toString().trim();
     const featured = formData.get('featured') === 'on';
 
-    if (!name || Number.isNaN(price) || price <= 0) {
+    if (!name || Number.isNaN(priceValue) || priceValue <= 0) {
       window.alert('Palun täida nimi ja positiivne hind.');
       return;
     }
 
-    const id = `custom-${Date.now()}`;
-    state.products.push({ id, name, price, category, image, description, featured });
-    renderEverything();
-    els.adminProductForm.reset();
-    window.alert('Toode lisatud (demo).');
+    const productPayload = normaliseProduct({
+      id: `custom-${Date.now()}`,
+      name,
+      price: priceValue,
+      category,
+      image,
+      description,
+      featured,
+    });
+
+    try {
+      if (firebaseProductsReady && firebaseProductsService) {
+        await firebaseProductsService.addProduct(productPayload);
+      } else {
+        state.products.push(productPayload);
+        renderEverything();
+      }
+      els.adminProductForm.reset();
+      window.alert('Toode lisatud.');
+    } catch (error) {
+      console.error('Failed to save product', error);
+      window.alert('Toote salvestamine ebaõnnestus. Palun proovi uuesti.');
+    }
   });
 
-  els.adminProductTable?.addEventListener('click', (event) => {
+  els.adminProductTable?.addEventListener('click', async (event) => {
     const button = event.target.closest('[data-remove-product]');
     if (!button) return;
     const { removeProduct: productId } = button.dataset;
-    if (productId && window.confirm('Kas eemaldada toode kataloogist?')) {
-      removeProduct(productId);
+    if (!productId) return;
+    if (!window.confirm('Kas eemaldada toode kataloogist?')) return;
+    try {
+      if (firebaseProductsReady && firebaseProductsService) {
+        await firebaseProductsService.removeProduct(productId);
+      } else {
+        removeProductLocal(productId);
+      }
+    } catch (error) {
+      console.error('Failed to remove product', error);
+      window.alert('Toote eemaldamine ebaõnnestus. Palun proovi uuesti.');
     }
   });
 }
@@ -808,13 +891,14 @@ function startFlow() {
   welcomeTimeout = window.setTimeout(() => showView('home'), 1600);
 }
 
-function initialise() {
+async function initialise() {
   cacheDom();
   applyTheme();
   populatePreferenceControls();
   renderEverything();
   bindUI();
   startFlow();
+  await setupProductSync();
 }
 
 async function boot() {
@@ -828,7 +912,7 @@ async function boot() {
     console.warn('loadPartialsPromise missing; partial templates may not be loaded.');
   }
 
-  initialise();
+  await initialise();
 }
 
 boot().catch((error) => {
