@@ -8,11 +8,9 @@ import {
   onSnapshot,
   doc,
   getDoc,
-  getDocs,
   setDoc,
   deleteDoc,
   serverTimestamp,
-  writeBatch,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
 const globalScope = typeof window !== 'undefined' ? window : globalThis;
@@ -78,26 +76,6 @@ function createFirebaseProductsService(config) {
     emulatorLinked = true;
   }
 
-  async function seedDemoProducts(products = []) {
-    if (!Array.isArray(products) || products.length === 0) return false;
-    const db = await init();
-    const snapshot = await getDocs(collection(db, 'products'));
-    if (!snapshot.empty) return false;
-    const batch = writeBatch(db);
-    products.forEach((product) => {
-      const clean = sanitizeProduct(product);
-      const target = doc(db, 'products', clean.id);
-      const { id, ...rest } = clean;
-      batch.set(target, {
-        ...rest,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
-    });
-    await batch.commit();
-    return true;
-  }
-
   async function subscribeToProducts(callback) {
     if (typeof callback !== 'function') {
       throw new Error('subscribeToProducts callback must be a function');
@@ -141,7 +119,6 @@ function createFirebaseProductsService(config) {
   return Object.freeze({
     isAvailable: true,
     init,
-    seedDemoProducts,
     subscribeToProducts,
     addProduct,
     removeProduct,
@@ -150,7 +127,7 @@ function createFirebaseProductsService(config) {
 
 const firebaseConfig = readFirebaseConfig();
 if (!firebaseConfig) {
-  console.warn('Firebase config not found. Falling back to local demo data.');
+  console.warn('Firebase config not found. Products cannot be synced.');
 }
 
 globalScope.firebaseProducts = firebaseConfig ? createFirebaseProductsService(firebaseConfig) : null;
