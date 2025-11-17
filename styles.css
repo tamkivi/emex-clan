@@ -412,3 +412,21 @@ footer { color: var(--muted); font-size: .9rem; text-align: center; padding: 24p
 .quick-card { text-align: left; }
 .quick-card img { width: 72px; height: 72px; border-radius: 16px; margin-bottom: 12px; background: var(--surface-alt); }
 .quick-card .badge { position: static; display: inline-block; }
+
+.login-btn {
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.login-btn:hover {
+  background: #ffae00;
+  transform: translateY(-1px);
+}
