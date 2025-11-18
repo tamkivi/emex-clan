@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+  /* Theme variables */
+  --bg-gradient: linear-gradient(180deg, #f4f7ff 0%, #e8edff 50%, #ecf3ff 100%);
+  --surface: rgba(255, 255, 255, 0.9);
+  --surface-alt: rgba(255, 255, 255, 0.7);
+  --border: rgba(15, 23, 42, 0.1);
+  --shadow: 0 8px 28px rgba(15, 23, 42, 0.1);
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+}
+
+body.theme-dark {
+  --bg-gradient: linear-gradient(180deg, #141d33 0%, #0b1220 100%);
+  --surface: rgba(17, 26, 46, 0.9);
+  --surface-alt: rgba(17, 26, 46, 0.7);
+  --border: rgba(148, 163, 184, 0.25);
+  --shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  --text: #f8fafc;
+  --muted: #cbd5e1;
+  --accent: #38bdf8;
+  --accent-hover: #0ea5e9;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+form div.incorrect label{
+  background-color: #f06272;
+}
+form div.incorrect input{
+  border-color: #f06272;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+}
+
+/* Wrapper container */
+.wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: 16px;
+  padding: 40px 32px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.wrapper h1 {
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: var(--accent);
+  text-transform: capitalize;
+}
+
+/* Form structure */
+form {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+form div {
+  display: flex;
+  align-items: center;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+form div:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+}
+
+label svg, label span {
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+}
+
+input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+input::placeholder {
+  color: var(--muted);
+}
+
+/* Button styling */
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+button:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Paragraph and link */
+p {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+p a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+p a:hover {
+  color: var(--accent-hover);
+}
+
