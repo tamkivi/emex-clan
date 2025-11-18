@@ -74,6 +74,16 @@ function normaliseProducts(list = []) {
   return list.map((product) => normaliseProduct(product));
 }
 
+function useLocalProducts() {
+  if (typeof unsubscribeProductListener === 'function') {
+    unsubscribeProductListener();
+    unsubscribeProductListener = null;
+  }
+  firebaseProductsReady = false;
+  state.products = normaliseProducts(initialProducts);
+  renderEverything();
+}
+
 const storedPreferences = {
   theme: localStorage.getItem('theme'),
   location: localStorage.getItem('location'),
@@ -504,12 +514,14 @@ function renderEverything() {
 
 async function setupProductSync() {
   if (!firebaseProductsService) {
-    console.error('Firebase config missing. Products cannot be loaded.');
-    window.alert('Firebase pole seadistatud. Lisa firebase-config.js fail, et laadida tooteid.');
+    useLocalProducts();
     return;
   }
   try {
     await firebaseProductsService.init();
+    await firebaseProductsService.seedDemoProducts(initialProducts).catch((seedError) => {
+      console.warn('Demo products were not seeded', seedError);
+    });
     if (typeof unsubscribeProductListener === 'function') {
       unsubscribeProductListener();
       unsubscribeProductListener = null;
@@ -520,9 +532,8 @@ async function setupProductSync() {
     });
     firebaseProductsReady = true;
   } catch (error) {
-    firebaseProductsReady = false;
-    console.error('Firebase product sync unavailable', error);
-    window.alert('Tooteid ei saanud Firebase\'ist laadida. Kontrolli projekti õigusi ja konfiguratsiooni.');
+    console.error('Firebase product sync unavailable, falling back to local data', error);
+    useLocalProducts();
   }
 }
 
@@ -595,6 +606,13 @@ function removeFromCart(productId) {
   persistCart();
   renderCart();
   renderStats();
+}
+
+function removeProductLocal(productId) {
+  state.products = state.products.filter((product) => product.id !== productId);
+  state.cart = state.cart.filter((item) => item.id !== productId);
+  persistCart();
+  renderEverything();
 }
 
 function handleCartListClick(event) {
@@ -745,15 +763,12 @@ function bindUI() {
     });
 
     try {
-      if (!firebaseProductsService) {
-        window.alert('Firebase pole seadistatud. Lisa tooted pärast konfiguratsiooni.');
-        return;
+      if (firebaseProductsReady && firebaseProductsService) {
+        await firebaseProductsService.addProduct(productPayload);
+      } else {
+        state.products.push(productPayload);
+        renderEverything();
       }
-      if (!firebaseProductsReady) {
-        window.alert('Ootame veel Firebase\'i ühendust. Palun proovi uuesti paari hetke pärast.');
-        return;
-      }
-      await firebaseProductsService.addProduct(productPayload);
       els.adminProductForm.reset();
       window.alert('Toode lisatud.');
     } catch (error) {
@@ -769,15 +784,11 @@ function bindUI() {
     if (!productId) return;
     if (!window.confirm('Kas eemaldada toode kataloogist?')) return;
     try {
-      if (!firebaseProductsService) {
-        window.alert('Firebase pole seadistatud. Eemaldamine pole võimalik.');
-        return;
+      if (firebaseProductsReady && firebaseProductsService) {
+        await firebaseProductsService.removeProduct(productId);
+      } else {
+        removeProductLocal(productId);
       }
-      if (!firebaseProductsReady) {
-        window.alert('Firebase\'i ühendus pole valmis. Palun proovi uuesti hiljem.');
-        return;
-      }
-      await firebaseProductsService.removeProduct(productId);
     } catch (error) {
       console.error('Failed to remove product', error);
       window.alert('Toote eemaldamine ebaõnnestus. Palun proovi uuesti.');
