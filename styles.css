@@ -412,24 +412,3 @@ footer { color: var(--muted); font-size: .9rem; text-align: center; padding: 24p
 .quick-card { text-align: left; }
 .quick-card img { width: 72px; height: 72px; border-radius: 16px; margin-bottom: 12px; background: var(--surface-alt); }
 .quick-card .badge { position: static; display: inline-block; }
-
-/* --- ABOUT PAGE RESPONSIVE --- */
-
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: center;
-}
-
-@media (max-width: 768px) {
-  .about-grid {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-
-  .about-grid img {
-    width: 100%;
-    margin: 0 auto;
-  }
-}
