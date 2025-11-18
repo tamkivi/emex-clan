@@ -1,3 +1,27 @@
+<<<<<<< HEAD
+
+node_modules/
+# 🔐 Firebase private key (never commit!)
+firebase-key.json
+
+# 📦 Node dependencies
+node_modules/
+
+# ⚙️ Build or cache outputs (if your setup builds)
+dist/
+build/
+.cache/
+tmp/
+
+# 🧠 Environment & config files
+.env
+.env.local
+firebase-debug.log
+
+# ⚙️ Firebase Hosting local emulator data
+.firebaserc
+firebase-debug.log
+=======
 # Logs
 logs
 *.log
@@ -67,3 +91,4 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+>>>>>>> main
