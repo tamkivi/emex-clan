@@ -74,16 +74,6 @@ function normaliseProducts(list = []) {
   return list.map((product) => normaliseProduct(product));
 }
 
-function useLocalProducts() {
-  if (typeof unsubscribeProductListener === 'function') {
-    unsubscribeProductListener();
-    unsubscribeProductListener = null;
-  }
-  firebaseProductsReady = false;
-  state.products = normaliseProducts(initialProducts);
-  renderEverything();
-}
-
 const storedPreferences = {
   theme: localStorage.getItem('theme'),
   location: localStorage.getItem('location'),
@@ -512,16 +502,28 @@ function renderEverything() {
   renderAdminTable();
 }
 
-async function setupProductSync() {
+async function loadProductsFromFirebase() {
+  if (typeof window.loadProductsFromFirestore !== 'function') {
+    throw new Error('window.loadProductsFromFirestore is not defined');
+  }
+  try {
+    const products = await window.loadProductsFromFirestore();
+    const normalized = normaliseProducts(products);
+    state.products = normalized;
+    return normalized;
+  } catch (error) {
+    console.error('Failed to load products from Firestore', error);
+    throw error;
+  }
+}
+
+async function subscribeToRemoteProducts() {
   if (!firebaseProductsService) {
-    useLocalProducts();
+    console.warn('Firebase product service unavailable; skipping realtime updates.');
     return;
   }
   try {
     await firebaseProductsService.init();
-    await firebaseProductsService.seedDemoProducts(initialProducts).catch((seedError) => {
-      console.warn('Demo products were not seeded', seedError);
-    });
     if (typeof unsubscribeProductListener === 'function') {
       unsubscribeProductListener();
       unsubscribeProductListener = null;
@@ -532,8 +534,8 @@ async function setupProductSync() {
     });
     firebaseProductsReady = true;
   } catch (error) {
-    console.error('Firebase product sync unavailable, falling back to local data', error);
-    useLocalProducts();
+    firebaseProductsReady = false;
+    console.error('Firebase product sync unavailable', error);
   }
 }
 
@@ -802,30 +804,36 @@ function startFlow() {
   welcomeTimeout = window.setTimeout(() => showView('home'), 1600);
 }
 
-async function initialise() {
+function initialiseUi() {
   cacheDom();
   applyTheme();
   populatePreferenceControls();
   renderEverything();
   bindUI();
   startFlow();
-  await setupProductSync();
 }
 
-async function boot() {
-  if (document.readyState === 'loading') {
-    await new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
-  }
+async function initApp() {
+  console.log('app.js init');
+  try {
+    if (document.readyState === 'loading') {
+      await new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
+    }
 
-  if (window.loadPartialsPromise) {
-    await window.loadPartialsPromise;
-  } else {
-    console.warn('loadPartialsPromise missing; partial templates may not be loaded.');
-  }
+    if (window.loadPartialsPromise) {
+      await window.loadPartialsPromise;
+    } else {
+      console.warn('loadPartialsPromise missing; partial templates may not be loaded.');
+    }
 
-  await initialise();
+    initialiseUi();
+    const products = await loadProductsFromFirebase();
+    console.log('Loaded products:', products);
+    renderEverything();
+    await subscribeToRemoteProducts();
+  } catch (error) {
+    console.error('Failed to initialise application', error);
+  }
 }
 
-boot().catch((error) => {
-  console.error('Failed to initialise application', error);
-});
+initApp();
