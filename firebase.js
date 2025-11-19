@@ -8,18 +8,13 @@ import {
   onSnapshot,
   doc,
   getDoc,
-<<<<<<< HEAD
-  setDoc,
-  deleteDoc,
-  serverTimestamp,
-=======
   getDocs,
   setDoc,
   deleteDoc,
   serverTimestamp,
   writeBatch,
->>>>>>> main
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
+
 
 const globalScope = typeof window !== 'undefined' ? window : globalThis;
 
@@ -84,8 +79,7 @@ function createFirebaseProductsService(config) {
     emulatorLinked = true;
   }
 
-<<<<<<< HEAD
-=======
+
   async function seedDemoProducts(products = []) {
     if (!Array.isArray(products) || products.length === 0) return false;
     const db = await init();
@@ -106,7 +100,7 @@ function createFirebaseProductsService(config) {
     return true;
   }
 
->>>>>>> main
+
   async function subscribeToProducts(callback) {
     if (typeof callback !== 'function') {
       throw new Error('subscribeToProducts callback must be a function');
@@ -150,10 +144,7 @@ function createFirebaseProductsService(config) {
   return Object.freeze({
     isAvailable: true,
     init,
-<<<<<<< HEAD
-=======
     seedDemoProducts,
->>>>>>> main
     subscribeToProducts,
     addProduct,
     removeProduct,
@@ -162,11 +153,9 @@ function createFirebaseProductsService(config) {
 
 const firebaseConfig = readFirebaseConfig();
 if (!firebaseConfig) {
-<<<<<<< HEAD
-  console.warn('Firebase config not found. Products cannot be synced.');
-=======
+
   console.warn('Firebase config not found. Falling back to local demo data.');
->>>>>>> main
+
 }
 
 globalScope.firebaseProducts = firebaseConfig ? createFirebaseProductsService(firebaseConfig) : null;
