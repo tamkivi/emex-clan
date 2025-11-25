@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signin</title>
+    <title>Signup</title>
     <link rel="stylesheet" href="signup_style.css" />
+    <style>
+        .error-message {
+            color: #ff4444;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .input-error {
+            border-color: #ff4444 !important;
+        }
+    </style>
 </head>
 <body>
     <div class="wrapper">
@@ -33,10 +44,75 @@
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
                 </label>
                 <input required type="password" name="repeat-password" id="repeat-password-input" placeholder="repeat-password">
+                <div class="error-message" id="password-error">Passwords do not match!</div>
             </div>
             <button type="submit">signup</button>
         </form>
-        <p>Already have an account? <a href="signin.html">login</a></a></p>
+        <p>Already have an account? <a href="signin.html">login</a></p>
     </div>
+
+    <script>
+        document.getElementById('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get form values
+            const password = document.getElementById('password-input').value;
+            const repeatPassword = document.getElementById('repeat-password-input').value;
+            const passwordError = document.getElementById('password-error');
+            const repeatPasswordInput = document.getElementById('repeat-password-input');
+
+            // Reset error state
+            passwordError.style.display = 'none';
+            repeatPasswordInput.classList.remove('input-error');
+
+            // Check if passwords match
+            if (password !== repeatPassword) {
+                // Show error and prevent form submission
+                passwordError.style.display = 'block';
+                repeatPasswordInput.classList.add('input-error');
+                return; // Stop the form submission
+            }
+
+            // If passwords match, continue with signup
+            const firstname = document.getElementById('firstname-input').value;
+            const email = document.getElementById('email-input').value;
+
+            console.log('Signing up with:', { firstname, email, password });
+
+            // Here you would typically send the data to your server
+            // For now, just redirect to main page
+            window.location.href = 'index.html';
+        });
+
+        // Optional: Real-time validation as user types
+        document.getElementById('repeat-password-input').addEventListener('input', function() {
+            const password = document.getElementById('password-input').value;
+            const repeatPassword = this.value;
+            const passwordError = document.getElementById('password-error');
+
+            if (repeatPassword && password !== repeatPassword) {
+                passwordError.style.display = 'block';
+                this.classList.add('input-error');
+            } else {
+                passwordError.style.display = 'none';
+                this.classList.remove('input-error');
+            }
+        });
+
+        // Optional: Also validate when typing in the password field
+        document.getElementById('password-input').addEventListener('input', function() {
+            const password = this.value;
+            const repeatPassword = document.getElementById('repeat-password-input').value;
+            const passwordError = document.getElementById('password-error');
+
+            if (repeatPassword && password !== repeatPassword) {
+                passwordError.style.display = 'block';
+                document.getElementById('repeat-password-input').classList.add('input-error');
+            } else {
+                passwordError.style.display = 'none';
+                document.getElementById('repeat-password-input').classList.remove('input-error');
+            }
+        });
+    </script>
 </body>
 </html>
