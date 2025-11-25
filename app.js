@@ -1,8 +1,12 @@
+import { loadProductsFromFirestore, firebaseProductsService as firebaseProductsServiceInstance } from './firebase.js';
+
 const bodyEl = document.body;
 const views = {};
 const els = {};
-const firebaseProductsService = typeof window !== 'undefined' ? window.firebaseProducts || null : null;
 let firebaseProductsReady = false;
+function getFirebaseProductsService() {
+  return firebaseProductsServiceInstance;
+}
 let unsubscribeProductListener = null;
 
 const currencyInfo = {
@@ -72,16 +76,6 @@ function normaliseProduct(product = {}) {
 
 function normaliseProducts(list = []) {
   return list.map((product) => normaliseProduct(product));
-}
-
-function useLocalProducts() {
-  if (typeof unsubscribeProductListener === 'function') {
-    unsubscribeProductListener();
-    unsubscribeProductListener = null;
-  }
-  firebaseProductsReady = false;
-  state.products = normaliseProducts(initialProducts);
-  renderEverything();
 }
 
 const storedPreferences = {
@@ -512,16 +506,19 @@ function renderEverything() {
   renderAdminTable();
 }
 
-async function setupProductSync() {
+function renderProducts(products = []) {
+  state.products = normaliseProducts(products);
+  renderEverything();
+}
+
+async function subscribeToRemoteProducts() {
+  const firebaseProductsService = getFirebaseProductsService();
   if (!firebaseProductsService) {
-    useLocalProducts();
+    console.warn('Firebase product service unavailable; skipping realtime updates.');
     return;
   }
   try {
     await firebaseProductsService.init();
-    await firebaseProductsService.seedDemoProducts(initialProducts).catch((seedError) => {
-      console.warn('Demo products were not seeded', seedError);
-    });
     if (typeof unsubscribeProductListener === 'function') {
       unsubscribeProductListener();
       unsubscribeProductListener = null;
@@ -532,8 +529,8 @@ async function setupProductSync() {
     });
     firebaseProductsReady = true;
   } catch (error) {
-    console.error('Firebase product sync unavailable, falling back to local data', error);
-    useLocalProducts();
+    firebaseProductsReady = false;
+    console.error('Firebase product sync unavailable', error);
   }
 }
 
@@ -763,6 +760,7 @@ function bindUI() {
     });
 
     try {
+      const firebaseProductsService = getFirebaseProductsService();
       if (firebaseProductsReady && firebaseProductsService) {
         await firebaseProductsService.addProduct(productPayload);
       } else {
@@ -784,6 +782,7 @@ function bindUI() {
     if (!productId) return;
     if (!window.confirm('Kas eemaldada toode kataloogist?')) return;
     try {
+      const firebaseProductsService = getFirebaseProductsService();
       if (firebaseProductsReady && firebaseProductsService) {
         await firebaseProductsService.removeProduct(productId);
       } else {
@@ -802,30 +801,26 @@ function startFlow() {
   welcomeTimeout = window.setTimeout(() => showView('home'), 1600);
 }
 
-async function initialise() {
+function initialiseUi() {
   cacheDom();
   applyTheme();
   populatePreferenceControls();
   renderEverything();
   bindUI();
   startFlow();
-  await setupProductSync();
 }
 
-async function boot() {
-  if (document.readyState === 'loading') {
-    await new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
+async function initApp() {
+  console.log('initApp starting…');
+  try {
+    const products = await loadProductsFromFirestore();
+    console.log('Loaded products from Firestore:', products);
+    renderProducts(products);
+    await subscribeToRemoteProducts();
+  } catch (err) {
+    console.error('Failed to load products from Firestore', err);
   }
-
-  if (window.loadPartialsPromise) {
-    await window.loadPartialsPromise;
-  } else {
-    console.warn('loadPartialsPromise missing; partial templates may not be loaded.');
-  }
-
-  await initialise();
 }
 
-boot().catch((error) => {
-  console.error('Failed to initialise application', error);
-});
+initialiseUi();
+initApp();

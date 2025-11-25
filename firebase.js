@@ -1,4 +1,5 @@
-import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
+import firebaseConfig from './firebase-config.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
 import {
   getFirestore,
   connectFirestoreEmulator,
@@ -15,25 +16,13 @@ import {
   writeBatch,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
+console.log('firebase.js starting, projectId =', firebaseConfig.projectId);
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const globalScope = typeof window !== 'undefined' ? window : globalThis;
-
-function readFirebaseConfig() {
-  if (globalScope.__FIREBASE_CONFIG__) return globalScope.__FIREBASE_CONFIG__;
-  if (globalScope.__FIREBASE_DEFAULTS__?.config) return globalScope.__FIREBASE_DEFAULTS__.config;
-  if (globalScope.firebaseConfig) return globalScope.firebaseConfig;
-  try {
-    const inlineConfig =
-      document.querySelector('script[type="application/json"][data-firebase-config]') ||
-      document.getElementById('firebase-config');
-    if (inlineConfig?.textContent) {
-      return JSON.parse(inlineConfig.textContent);
-    }
-  } catch (error) {
-    console.warn('Failed to parse inline Firebase config', error);
-  }
-  return null;
-}
+const PRODUCTS_COLLECTION = 'products';
 
 function sanitizeProduct(product = {}) {
   return {
@@ -49,46 +38,31 @@ function sanitizeProduct(product = {}) {
 }
 
 function shouldUseEmulator() {
-  if (!globalScope.location) return false;
-  if (globalScope.__USE_FIREBASE_EMULATORS__) return true;
-  const hosts = ['localhost', '127.0.0.1'];
-  if (hosts.includes(globalScope.location.hostname)) return true;
-  return /[?&]useEmulator=true/i.test(globalScope.location.search || '');
+  return false;
 }
 
-function createFirebaseProductsService(config) {
-  let appInstance;
-  let dbInstance;
+function createFirebaseProductsService(database) {
   let emulatorLinked = false;
 
   async function init() {
-    if (dbInstance) return dbInstance;
-    const existing = getApps();
-    appInstance = existing.length ? existing[0] : initializeApp(config);
-    dbInstance = getFirestore(appInstance);
-    maybeConnectEmulator();
-    return dbInstance;
+    const activeDb = database;
+    maybeConnectEmulator(activeDb);
+    return activeDb;
   }
 
   function maybeConnectEmulator() {
-    if (emulatorLinked || !dbInstance || !shouldUseEmulator()) return;
-    const emulatorSettings = globalScope.__FIREBASE_EMULATORS__?.firestore || {};
-    const host = emulatorSettings.host || '127.0.0.1';
-    const port = Number(emulatorSettings.port) || 8080;
-    connectFirestoreEmulator(dbInstance, host, port);
-    emulatorLinked = true;
+    return;
   }
-
 
   async function seedDemoProducts(products = []) {
     if (!Array.isArray(products) || products.length === 0) return false;
-    const db = await init();
-    const snapshot = await getDocs(collection(db, 'products'));
+    const activeDb = await init();
+    const snapshot = await getDocs(collection(activeDb, PRODUCTS_COLLECTION));
     if (!snapshot.empty) return false;
-    const batch = writeBatch(db);
+    const batch = writeBatch(activeDb);
     products.forEach((product) => {
       const clean = sanitizeProduct(product);
-      const target = doc(db, 'products', clean.id);
+      const target = doc(activeDb, PRODUCTS_COLLECTION, clean.id);
       const { id, ...rest } = clean;
       batch.set(target, {
         ...rest,
@@ -100,13 +74,12 @@ function createFirebaseProductsService(config) {
     return true;
   }
 
-
   async function subscribeToProducts(callback) {
     if (typeof callback !== 'function') {
       throw new Error('subscribeToProducts callback must be a function');
     }
-    const db = await init();
-    const productsQuery = query(collection(db, 'products'), orderBy('name', 'asc'));
+    const activeDb = await init();
+    const productsQuery = query(collection(activeDb, PRODUCTS_COLLECTION), orderBy('name', 'asc'));
     return onSnapshot(
       productsQuery,
       (snapshot) => {
@@ -123,9 +96,9 @@ function createFirebaseProductsService(config) {
   }
 
   async function addProduct(product) {
-    const db = await init();
+    const activeDb = await init();
     const clean = sanitizeProduct(product);
-    const ref = doc(db, 'products', clean.id);
+    const ref = doc(activeDb, PRODUCTS_COLLECTION, clean.id);
     const existing = await getDoc(ref);
     const timestamps = existing.exists()
       ? { updatedAt: serverTimestamp() }
@@ -137,12 +110,11 @@ function createFirebaseProductsService(config) {
 
   async function removeProduct(productId) {
     if (!productId) return;
-    const db = await init();
-    await deleteDoc(doc(db, 'products', productId));
+    const activeDb = await init();
+    await deleteDoc(doc(activeDb, PRODUCTS_COLLECTION, productId));
   }
 
   return Object.freeze({
-    isAvailable: true,
     init,
     seedDemoProducts,
     subscribeToProducts,
@@ -151,11 +123,15 @@ function createFirebaseProductsService(config) {
   });
 }
 
-const firebaseConfig = readFirebaseConfig();
-if (!firebaseConfig) {
+export const firebaseProductsService = createFirebaseProductsService(db);
 
-  console.warn('Firebase config not found. Falling back to local demo data.');
-
+export async function loadProductsFromFirestore() {
+  const snap = await getDocs(collection(db, PRODUCTS_COLLECTION));
+  return snap.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data(),
+  }));
 }
 
-globalScope.firebaseProducts = firebaseConfig ? createFirebaseProductsService(firebaseConfig) : null;
+
+console.log('firebase.js loaded');
