@@ -16,6 +16,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
 const PRODUCTS_COLLECTION = 'products';
+const CONFIG_READY_EVENT = 'firebase-config-ready';
 
 const globalScope = typeof window !== 'undefined' ? window : globalThis;
 
@@ -34,6 +35,75 @@ function readFirebaseConfig() {
     console.warn('Failed to parse inline Firebase config', error);
   }
   return null;
+}
+
+let firebaseConfigPromise = null;
+let firebaseProductsPromise = null;
+let firebaseConfigLogState = {
+  success: false,
+  failure: false,
+};
+
+function waitForFirebaseConfig(timeout = 5000) {
+  const immediate = readFirebaseConfig();
+  if (immediate) {
+    globalScope.firebaseConfig = immediate;
+    return Promise.resolve(immediate);
+  }
+  if (firebaseConfigPromise) return firebaseConfigPromise;
+
+  firebaseConfigPromise = new Promise((resolve) => {
+    let settled = false;
+    let timeoutId;
+
+    function cleanup() {
+      globalScope.removeEventListener?.(CONFIG_READY_EVENT, handleReady);
+      if (globalScope.document) {
+        globalScope.document.removeEventListener('DOMContentLoaded', tryResolve);
+      }
+      if (timeoutId) {
+        globalScope.clearTimeout(timeoutId);
+      }
+    }
+
+    function finish(config) {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      if (config && !globalScope.firebaseConfig) {
+        globalScope.firebaseConfig = config;
+      }
+      resolve(config || null);
+    }
+
+    function tryResolve() {
+      const config = readFirebaseConfig();
+      if (config) {
+        finish(config);
+      }
+    }
+
+    function handleReady(event) {
+      if (event?.detail) {
+        finish(event.detail);
+      } else {
+        tryResolve();
+      }
+    }
+
+    timeoutId = globalScope.setTimeout(() => {
+      finish(readFirebaseConfig());
+    }, timeout);
+
+    globalScope.addEventListener?.(CONFIG_READY_EVENT, handleReady);
+    if (globalScope.document) {
+      globalScope.document.addEventListener('DOMContentLoaded', tryResolve, { once: true });
+    }
+
+    tryResolve();
+  });
+
+  return firebaseConfigPromise;
 }
 
 function sanitizeProduct(product = {}) {
@@ -61,12 +131,20 @@ function createFirebaseProductsService(config) {
   let appInstance;
   let dbInstance;
   let emulatorLinked = false;
+  let initLogged = false;
 
   async function init() {
     if (dbInstance) return dbInstance;
+    if (!config) {
+      throw new Error('Firebase config missing. Cannot initialise Firestore.');
+    }
     const existing = getApps();
     appInstance = existing.length ? existing[0] : initializeApp(config);
     dbInstance = getFirestore(appInstance);
+    if (!initLogged) {
+      console.log('Firebase initialised with config:', config.projectId || '(unknown project)');
+      initLogged = true;
+    }
     maybeConnectEmulator();
     return dbInstance;
   }
@@ -151,26 +229,44 @@ function createFirebaseProductsService(config) {
   });
 }
 
-const firebaseConfig = readFirebaseConfig();
-if (!firebaseConfig) {
-  console.warn('Firebase config not found. Falling back to local demo data.');
-} else if (firebaseConfig.projectId) {
-  console.log(`Firebase config loaded for project ${firebaseConfig.projectId}`);
+async function ensureFirebaseProductsService() {
+  if (globalScope.firebaseProducts) return globalScope.firebaseProducts;
+  if (firebaseProductsPromise) return firebaseProductsPromise;
+
+  firebaseProductsPromise = waitForFirebaseConfig().then((config) => {
+    if (!config) {
+      if (!firebaseConfigLogState.failure) {
+        console.error('Firebase config missing. Firestore features are disabled.');
+        firebaseConfigLogState.failure = true;
+      }
+      return null;
+    }
+    if (!firebaseConfigLogState.success && config.projectId) {
+      console.log(`Firebase config loaded for project ${config.projectId}`);
+      firebaseConfigLogState.success = true;
+    }
+    const service = createFirebaseProductsService(config);
+    globalScope.firebaseProducts = service;
+    return service;
+  });
+
+  return firebaseProductsPromise;
 }
 
-const firebaseProducts = firebaseConfig ? createFirebaseProductsService(firebaseConfig) : null;
-globalScope.firebaseProducts = firebaseProducts;
-
 async function loadProductsFromFirestore() {
+  const firebaseProducts = await ensureFirebaseProductsService();
   if (!firebaseProducts) {
+    console.error('Firebase config missing. Cannot load products.');
     throw new Error('Firebase config missing. Cannot load products.');
   }
   const db = await firebaseProducts.init();
-  const snapshot = await getDocs(query(collection(db, PRODUCTS_COLLECTION), orderBy('name', 'asc')));
-  return snapshot.docs.map((docSnap) => ({
+  const snapshot = await getDocs(collection(db, PRODUCTS_COLLECTION));
+  const products = snapshot.docs.map((docSnap) => ({
     id: docSnap.id,
     ...docSnap.data(),
   }));
+  products.sort((a, b) => a.name.localeCompare(b.name));
+  return products;
 }
 
 globalScope.loadProductsFromFirestore = loadProductsFromFirestore;

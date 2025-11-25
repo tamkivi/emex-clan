@@ -1,8 +1,10 @@
 const bodyEl = document.body;
 const views = {};
 const els = {};
-const firebaseProductsService = typeof window !== 'undefined' ? window.firebaseProducts || null : null;
 let firebaseProductsReady = false;
+function getFirebaseProductsService() {
+  return typeof window !== 'undefined' ? window.firebaseProducts || null : null;
+}
 let unsubscribeProductListener = null;
 
 const currencyInfo = {
@@ -502,22 +504,8 @@ function renderEverything() {
   renderAdminTable();
 }
 
-async function loadProductsFromFirebase() {
-  if (typeof window.loadProductsFromFirestore !== 'function') {
-    throw new Error('window.loadProductsFromFirestore is not defined');
-  }
-  try {
-    const products = await window.loadProductsFromFirestore();
-    const normalized = normaliseProducts(products);
-    state.products = normalized;
-    return normalized;
-  } catch (error) {
-    console.error('Failed to load products from Firestore', error);
-    throw error;
-  }
-}
-
 async function subscribeToRemoteProducts() {
+  const firebaseProductsService = getFirebaseProductsService();
   if (!firebaseProductsService) {
     console.warn('Firebase product service unavailable; skipping realtime updates.');
     return;
@@ -765,6 +753,7 @@ function bindUI() {
     });
 
     try {
+      const firebaseProductsService = getFirebaseProductsService();
       if (firebaseProductsReady && firebaseProductsService) {
         await firebaseProductsService.addProduct(productPayload);
       } else {
@@ -786,6 +775,7 @@ function bindUI() {
     if (!productId) return;
     if (!window.confirm('Kas eemaldada toode kataloogist?')) return;
     try {
+      const firebaseProductsService = getFirebaseProductsService();
       if (firebaseProductsReady && firebaseProductsService) {
         await firebaseProductsService.removeProduct(productId);
       } else {
@@ -814,7 +804,7 @@ function initialiseUi() {
 }
 
 async function initApp() {
-  console.log('app.js init');
+  console.log('initApp() starting');
   try {
     if (document.readyState === 'loading') {
       await new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
@@ -827,8 +817,13 @@ async function initApp() {
     }
 
     initialiseUi();
-    const products = await loadProductsFromFirebase();
-    console.log('Loaded products:', products);
+    if (typeof window.loadProductsFromFirestore !== 'function') {
+      throw new Error('window.loadProductsFromFirestore is not defined');
+    }
+    const rawProducts = await window.loadProductsFromFirestore();
+    const normalizedProducts = normaliseProducts(rawProducts);
+    state.products = normalizedProducts;
+    console.log('Products loaded from Firestore:', normalizedProducts);
     renderEverything();
     await subscribeToRemoteProducts();
   } catch (error) {
