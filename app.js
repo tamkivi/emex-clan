@@ -504,6 +504,11 @@ function renderEverything() {
   renderAdminTable();
 }
 
+function renderProducts(products = []) {
+  state.products = normaliseProducts(products);
+  renderEverything();
+}
+
 async function subscribeToRemoteProducts() {
   const firebaseProductsService = getFirebaseProductsService();
   if (!firebaseProductsService) {
@@ -804,31 +809,16 @@ function initialiseUi() {
 }
 
 async function initApp() {
-  console.log('initApp() starting');
+  console.log('initApp starting…');
   try {
-    if (document.readyState === 'loading') {
-      await new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
-    }
-
-    if (window.loadPartialsPromise) {
-      await window.loadPartialsPromise;
-    } else {
-      console.warn('loadPartialsPromise missing; partial templates may not be loaded.');
-    }
-
-    initialiseUi();
-    if (typeof window.loadProductsFromFirestore !== 'function') {
-      throw new Error('window.loadProductsFromFirestore is not defined');
-    }
-    const rawProducts = await window.loadProductsFromFirestore();
-    const normalizedProducts = normaliseProducts(rawProducts);
-    state.products = normalizedProducts;
-    console.log('Products loaded from Firestore:', normalizedProducts);
-    renderEverything();
+    const products = await window.loadProductsFromFirestore();
+    console.log('Loaded products from Firestore:', products);
+    renderProducts(products);
     await subscribeToRemoteProducts();
-  } catch (error) {
-    console.error('Failed to initialise application', error);
+  } catch (err) {
+    console.error('Failed to load products from Firestore', err);
   }
 }
 
+initialiseUi();
 initApp();
