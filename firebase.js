@@ -50,14 +50,8 @@ function createFirebaseProductsService(database) {
     return activeDb;
   }
 
-  function maybeConnectEmulator(eDbactiv) {
-    if (emulatorLinked || !activeDb || !shouldUseEmulator()) return;
-    const emulatorSettings = globalScope.__FIREBASE_EMULATORS__?.firestore || {};
-    const host = emulatorSettings.host || '127.0.0.1';
-    const port = Number(emulatorSettings.port) || 8080;
-    console.info(`Connecting to Firestore emulator at ${host}:${port}`);
-    connectFirestoreEmulator(activeDb, host, port);
-    emulatorLinked = true;
+  function maybeConnectEmulator() {
+    return;
   }
 
   async function seedDemoProducts(products = []) {
@@ -129,10 +123,9 @@ function createFirebaseProductsService(database) {
   });
 }
 
-const firebaseProductsService = createFirebaseProductsService(db);
-globalScope.firebaseProducts = firebaseProductsService;
+export const firebaseProductsService = createFirebaseProductsService(db);
 
-async function loadProductsFromFirestore() {
+export async function loadProductsFromFirestore() {
   const snap = await getDocs(collection(db, PRODUCTS_COLLECTION));
   return snap.docs.map((docSnap) => ({
     id: docSnap.id,
@@ -140,6 +133,5 @@ async function loadProductsFromFirestore() {
   }));
 }
 
-window.loadProductsFromFirestore = loadProductsFromFirestore;
 
 console.log('firebase.js loaded');
