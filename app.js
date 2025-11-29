@@ -1,9 +1,11 @@
+import { loadProductsFromFirestore, firebaseProductsService as firebaseProductsServiceInstance } from './firebase.js';
+
 const bodyEl = document.body;
 const views = {};
 const els = {};
 let firebaseProductsReady = false;
 function getFirebaseProductsService() {
-  return typeof window !== 'undefined' ? window.firebaseProductsService || null : null;
+  return firebaseProductsServiceInstance;
 }
 let unsubscribeProductListener = null;
 
@@ -811,10 +813,7 @@ function initialiseUi() {
 async function initApp() {
   console.log('initApp starting…');
   try {
-    if (typeof window.loadProductsFromFirestore !== 'function') {
-      throw new Error('loadProductsFromFirestore is not available');
-    }
-    const products = await window.loadProductsFromFirestore();
+    const products = await loadProductsFromFirestore();
     console.log('Loaded products from Firestore:', products);
     renderProducts(products);
     await subscribeToRemoteProducts();
