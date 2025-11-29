@@ -1,4 +1,4 @@
-export const firebaseConfig = {
+window.firebaseConfig = {
   apiKey: 'AIzaSyDEnfGefS0oKYvcGmyQApHTq8IuBKGtsFA',
   authDomain: 'emex-clan.firebaseapp.com',
   projectId: 'emex-clan',
@@ -8,6 +8,4 @@ export const firebaseConfig = {
   measurementId: 'G-HMZPQW1VBB',
 };
 
-console.log('firebase-config.js loaded as module with projectId =', firebaseConfig.projectId);
-
-export default firebaseConfig;
+console.log('firebase-config.js loaded with projectId =', window.firebaseConfig.projectId);
