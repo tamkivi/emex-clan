@@ -1,4 +1,10 @@
-import { loadProductsFromFirestore, firebaseProductsService as firebaseProductsServiceInstance } from './firebase.js';
+import {
+  loadProductsFromFirestore,
+  firebaseProductsService as firebaseProductsServiceInstance,
+  auth,
+  onAuthStateChanged,
+  isAdminEmail,
+} from './firebase.js';
 
 const bodyEl = document.body;
 const views = {};
@@ -8,6 +14,8 @@ function getFirebaseProductsService() {
   return firebaseProductsServiceInstance;
 }
 let unsubscribeProductListener = null;
+let currentUser = null;
+let currentUserIsAdmin = false;
 
 const currencyInfo = {
   EUR: { symbol: '€', rate: 1, locale: 'et-EE', currency: 'EUR' },
@@ -58,6 +66,7 @@ function cacheDom() {
   els.notificationsBtn = document.getElementById('notificationsBtn');
   els.cartBtn = document.getElementById('cartBtn');
   els.quickActionsPanel = document.getElementById('quickActionsPanel');
+  els.profileEmail = document.getElementById('profileEmail');
 }
 
 function normaliseProduct(product = {}) {
@@ -68,7 +77,7 @@ function normaliseProduct(product = {}) {
     price: Number.isFinite(priceNumber) ? priceNumber : 0,
     category: product.category || 'Määramata',
     description: product.description || '',
-    image: product.image || 'https://source.unsplash.com/600x600/?product',
+    image: product.image || 'https://images.pexels.com/photos/715688/pexels-photo-715688.jpeg?auto=compress&cs=tinysrgb&h=600',
     featured: Boolean(product.featured),
     adult: Boolean(product.adult),
   };
@@ -506,6 +515,17 @@ function renderEverything() {
   renderAdminTable();
 }
 
+function updateAuthUi() {
+  if (els.profileEmail) {
+    els.profileEmail.textContent = currentUser?.email || 'Külaline';
+  }
+  if (els.openAdmin) {
+    const canViewAdmin = currentUserIsAdmin;
+    els.openAdmin.style.display = canViewAdmin ? '' : 'none';
+    els.openAdmin.setAttribute('aria-disabled', String(!canViewAdmin));
+  }
+}
+
 function renderProducts(products = []) {
   state.products = normaliseProducts(products);
   renderEverything();
@@ -535,6 +555,10 @@ async function subscribeToRemoteProducts() {
 }
 
 function showView(name) {
+  if (name === 'admin' && !currentUserIsAdmin) {
+    console.warn('Attempted to open admin view without permissions');
+    return;
+  }
   Object.values(views).forEach((view) => view?.classList.remove('active'));
   const target = views[name] ?? views.home;
   if (!target) return;
@@ -726,7 +750,13 @@ function bindUI() {
   });
 
   els.viewCartShortcut?.addEventListener('click', () => showView('ostukorv'));
-  els.openAdmin?.addEventListener('click', () => showView('admin'));
+  els.openAdmin?.addEventListener('click', () => {
+    if (!currentUserIsAdmin) {
+      window.alert('Ainult administraatorid saavad haldusvaadet avada.');
+      return;
+    }
+    showView('admin');
+  });
   els.settingsBtn?.addEventListener('click', () => showView('settings'));
   els.notificationsBtn?.addEventListener('click', () => showView('teated'));
   els.cartBtn?.addEventListener('click', () => showView('ostukorv'));
@@ -740,7 +770,9 @@ function bindUI() {
     const name = (formData.get('name') || '').toString().trim();
     const priceValue = Number(formData.get('price'));
     const category = (formData.get('category') || '').toString().trim() || 'Määramata';
-    const image = (formData.get('image') || '').toString().trim() || 'https://source.unsplash.com/600x600/?new%20product';
+    const image =
+      (formData.get('image') || '').toString().trim() ||
+      'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=600';
     const description = (formData.get('description') || '').toString().trim();
     const featured = formData.get('featured') === 'on';
 
@@ -808,6 +840,7 @@ function initialiseUi() {
   renderEverything();
   bindUI();
   startFlow();
+  updateAuthUi();
 }
 
 async function initApp() {
@@ -824,3 +857,9 @@ async function initApp() {
 
 initialiseUi();
 initApp();
+
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  currentUserIsAdmin = Boolean(user?.email && isAdminEmail(user.email));
+  updateAuthUi();
+});
