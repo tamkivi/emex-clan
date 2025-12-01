@@ -78,6 +78,7 @@ function normaliseProduct(product = {}) {
     category: product.category || 'Määramata',
     description: product.description || '',
     image: product.image || 'https://images.pexels.com/photos/715688/pexels-photo-715688.jpeg?auto=compress&cs=tinysrgb&h=600',
+    image: product.image || 'https://images.pexels.com/photos/715688/pexels-photo-715688.jpeg?auto=compress&cs=tinysrgb&h=600',
     featured: Boolean(product.featured),
     adult: Boolean(product.adult),
   };
