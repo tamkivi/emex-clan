@@ -31,7 +31,9 @@ function sanitizeProduct(product = {}) {
     price: Number(product.price) || 0,
     category: product.category || 'Määramata',
     description: product.description || '',
-    image: product.image || 'https://source.unsplash.com/600x600/?product',
+    image:
+      product.image ||
+      'https://images.pexels.com/photos/715688/pexels-photo-715688.jpeg?auto=compress&cs=tinysrgb&h=600',
     featured: Boolean(product.featured),
     adult: Boolean(product.adult),
   };

@@ -68,7 +68,7 @@ function normaliseProduct(product = {}) {
     price: Number.isFinite(priceNumber) ? priceNumber : 0,
     category: product.category || 'Määramata',
     description: product.description || '',
-    image: product.image || 'https://source.unsplash.com/600x600/?product',
+    image: product.image || 'https://images.pexels.com/photos/715688/pexels-photo-715688.jpeg?auto=compress&cs=tinysrgb&h=600',
     featured: Boolean(product.featured),
     adult: Boolean(product.adult),
   };
@@ -740,7 +740,7 @@ function bindUI() {
     const name = (formData.get('name') || '').toString().trim();
     const priceValue = Number(formData.get('price'));
     const category = (formData.get('category') || '').toString().trim() || 'Määramata';
-    const image = (formData.get('image') || '').toString().trim() || 'https://source.unsplash.com/600x600/?new%20product';
+    const image = (formData.get('image') || '').toString().trim() || 'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=600';
     const description = (formData.get('description') || '').toString().trim();
     const featured = formData.get('featured') === 'on';
 
