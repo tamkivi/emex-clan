@@ -15,14 +15,23 @@ import {
   serverTimestamp,
   writeBatch,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+} from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
 
 console.log('firebase.js starting, projectId =', firebaseConfig.projectId);
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 const globalScope = typeof window !== 'undefined' ? window : globalThis;
 const PRODUCTS_COLLECTION = 'products';
+const ADMIN_EMAILS = ['admin@1stopshop.ee', 'gustavpaul@tamkivi.com'].map((email) => email.toLowerCase());
 
 function sanitizeProduct(product = {}) {
   return {
@@ -134,6 +143,12 @@ export async function loadProductsFromFirestore() {
     ...docSnap.data(),
   }));
 }
+
+export function isAdminEmail(email = '') {
+  return ADMIN_EMAILS.includes(email.trim().toLowerCase());
+}
+
+export { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut };
 
 
 console.log('firebase.js loaded');

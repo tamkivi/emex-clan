@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login</title>
   <link rel="stylesheet" href="signup_style.css">
+  <style>
+    .error-message {
+      color: #ff4444;
+      font-size: 14px;
+      margin-top: 8px;
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <div class="wrapper">
@@ -32,45 +40,59 @@
       </div>
 
       <button type="submit">login</button>
+      <div class="error-message" id="signinError"></div>
 
       <p class="signup">Don't have an account? <a href="signup.html">Signup</a></p>
     </form>
   </div>
 
-  <script>
-    document.getElementById('form').addEventListener('submit', function(e) {
-      e.preventDefault(); // Prevent the form from submitting normally
+  <script type="module">
+    import { auth, signInWithEmailAndPassword } from './firebase.js';
 
-      // Get form values
-      const email = document.getElementById('email-input').value;
+    const formEl = document.getElementById('form');
+    const signinError = document.getElementById('signinError');
+
+    function formatLoginError(error) {
+      const code = error?.code || '';
+      switch (code) {
+        case 'auth/invalid-credential':
+        case 'auth/wrong-password':
+          return 'Vale e-post või parool.';
+        case 'auth/user-not-found':
+          return 'Sellise e-postiga kasutajat ei leitud.';
+        default:
+          return 'Sisselogimine ebaõnnestus. Palun proovi uuesti.';
+      }
+    }
+
+    formEl.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      signinError.style.display = 'none';
+      signinError.textContent = '';
+
+      const email = document.getElementById('email-input').value.trim();
       const password = document.getElementById('password-input').value;
       const rememberMe = document.getElementById('remember').checked;
 
-      // Basic validation
       if (!email || !password) {
-        alert('Please fill in all fields');
+        signinError.textContent = 'Palun täida kõik väljad.';
+        signinError.style.display = 'block';
         return;
       }
 
-      // Here you would typically:
-      // 1. Send login request to your server
-      // 2. Validate credentials
-      // 3. Store authentication token (if using Remember me)
-      // 4. Then redirect
-
-      // For demo purposes, we'll simulate a successful login
-      console.log('Logging in with:', { email, password, rememberMe });
-
-      // Store login state in localStorage (optional)
-      if (rememberMe) {
-        localStorage.setItem('userLoggedIn', 'true');
-        localStorage.setItem('userEmail', email);
-      } else {
-        sessionStorage.setItem('userLoggedIn', 'true');
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        if (rememberMe) {
+          localStorage.setItem('preferredEmail', email);
+        } else {
+          localStorage.removeItem('preferredEmail');
+        }
+        window.location.href = 'main.html';
+      } catch (error) {
+        signinError.textContent = formatLoginError(error);
+        signinError.style.display = 'block';
+        console.error('Login failed', error);
       }
-
-      // Redirect to main page (replace 'index.html' with your actual main page)
-      window.location.href = 'index.html';
     });
   </script>
 </body>

@@ -47,71 +47,74 @@
                 <div class="error-message" id="password-error">Passwords do not match!</div>
             </div>
             <button type="submit">signup</button>
+            <div class="error-message" id="signupError"></div>
         </form>
         <p>Already have an account? <a href="signin.html">login</a></p>
     </div>
 
-    <script>
-        document.getElementById('form').addEventListener('submit', function(e) {
-            e.preventDefault();
+    <script type="module">
+        import { auth, createUserWithEmailAndPassword } from './firebase.js';
 
-            // Get form values
+        const formEl = document.getElementById('form');
+        const passwordError = document.getElementById('password-error');
+        const repeatPasswordInput = document.getElementById('repeat-password-input');
+        const signupError = document.getElementById('signupError');
+
+        function showPasswordMismatch(show) {
+            passwordError.style.display = show ? 'block' : 'none';
+            repeatPasswordInput.classList.toggle('input-error', show);
+        }
+
+        function resetErrors() {
+            showPasswordMismatch(false);
+            signupError.style.display = 'none';
+            signupError.textContent = '';
+        }
+
+        function formatAuthError(error) {
+            const code = error?.code || '';
+            switch (code) {
+                case 'auth/email-already-in-use':
+                    return 'See e-posti aadress on juba registreeritud.';
+                case 'auth/invalid-email':
+                    return 'E-postiaadress on vigane.';
+                case 'auth/weak-password':
+                    return 'Parool peab olema vähemalt 6 tähemärki.';
+                default:
+                    return 'Registreerimine ebaõnnestus. Palun proovi uuesti.';
+            }
+        }
+
+        formEl.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            resetErrors();
+
             const password = document.getElementById('password-input').value;
-            const repeatPassword = document.getElementById('repeat-password-input').value;
-            const passwordError = document.getElementById('password-error');
-            const repeatPasswordInput = document.getElementById('repeat-password-input');
-
-            // Reset error state
-            passwordError.style.display = 'none';
-            repeatPasswordInput.classList.remove('input-error');
-
-            // Check if passwords match
+            const repeatPassword = repeatPasswordInput.value;
             if (password !== repeatPassword) {
-                // Show error and prevent form submission
-                passwordError.style.display = 'block';
-                repeatPasswordInput.classList.add('input-error');
-                return; // Stop the form submission
+                showPasswordMismatch(true);
+                return;
             }
 
-            // If passwords match, continue with signup
-            const firstname = document.getElementById('firstname-input').value;
-            const email = document.getElementById('email-input').value;
+            const email = document.getElementById('email-input').value.trim();
 
-            console.log('Signing up with:', { firstname, email, password });
-
-            // Here you would typically send the data to your server
-            // For now, just redirect to main page
-            window.location.href = 'index.html';
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                window.location.href = 'signin.html';
+            } catch (error) {
+                signupError.textContent = formatAuthError(error);
+                signupError.style.display = 'block';
+                console.error('Signup failed', error);
+            }
         });
 
-        // Optional: Real-time validation as user types
-        document.getElementById('repeat-password-input').addEventListener('input', function() {
+        repeatPasswordInput.addEventListener('input', () => {
             const password = document.getElementById('password-input').value;
-            const repeatPassword = this.value;
-            const passwordError = document.getElementById('password-error');
-
-            if (repeatPassword && password !== repeatPassword) {
-                passwordError.style.display = 'block';
-                this.classList.add('input-error');
-            } else {
-                passwordError.style.display = 'none';
-                this.classList.remove('input-error');
-            }
+            showPasswordMismatch(Boolean(repeatPasswordInput.value) && password !== repeatPasswordInput.value);
         });
 
-        // Optional: Also validate when typing in the password field
-        document.getElementById('password-input').addEventListener('input', function() {
-            const password = this.value;
-            const repeatPassword = document.getElementById('repeat-password-input').value;
-            const passwordError = document.getElementById('password-error');
-
-            if (repeatPassword && password !== repeatPassword) {
-                passwordError.style.display = 'block';
-                document.getElementById('repeat-password-input').classList.add('input-error');
-            } else {
-                passwordError.style.display = 'none';
-                document.getElementById('repeat-password-input').classList.remove('input-error');
-            }
+        document.getElementById('password-input').addEventListener('input', (event) => {
+            showPasswordMismatch(Boolean(repeatPasswordInput.value) && event.target.value !== repeatPasswordInput.value);
         });
     </script>
 </body>
