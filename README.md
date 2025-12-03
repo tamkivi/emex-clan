@@ -5,15 +5,7 @@
 The webstore now reads and writes every product through Firebase Firestore.
 
 1. Copy `firebase-config.example.js` to `firebase-config.js` and fill it with your Firebase project's client config (API key, projectId, etc.). The file is ignored from git but loaded in both `index.html` files before `firebase.js`.
-2. Provide admin credentials when running tools that talk to Firestore from Node (e.g. `export GOOGLE_APPLICATION_CREDENTIALS=path/to/serviceAccount.json`).
-3. Install dependencies and seed the catalog:
-
-```bash
-npm install
-GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/serviceAccount.json npm run seed:products
-```
-
-The seed script pushes the contents of `data/products.json` to the `products` collection so the frontend can display them immediately. Afterwards you can add or remove products from the “Admin view” page and every change is persisted straight to Firestore.
+2. Install dependencies (`npm install`) so local tooling (ESLint, optional scripts) works if you need it.
 
 If Firebase is not configured, the site shows an alert and no products are rendered (there is no longer any local fallback data).
 

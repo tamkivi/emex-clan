@@ -4,8 +4,7 @@
   "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "seed:products": "node scripts/seed-products.mjs"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
