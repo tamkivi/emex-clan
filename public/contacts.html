@@ -81,14 +81,27 @@
 
           <!-- Sõnumivorm -->
           <div class="card" style="padding:20px; display:grid; gap:14px;">
-            <h3>Saada sõnum</h3>
+  <h3>Saada sõnum</h3>
 
-            <input type="text" placeholder="Sinu nimi" class="input">
-            <input type="email" placeholder="Sinu e-post" class="input">
-            <textarea rows="5" placeholder="Sõnum" class="input"></textarea>
+  <form id="contact-form" style="display:grid; gap:14px;">
 
-            <button class="btn">Saada sõnum</button>
-          </div>
+    <input type="text" id="name" placeholder="Sinu nimi" class="input" required>
+
+    <input type="email" id="email" placeholder="Sinu e-post" class="input" required>
+    <p id="email-error" style="color:#ff6b6b; font-size:0.9rem; display:none;">
+      Palun sisesta korrektne email.
+    </p>
+
+    <textarea id="message" rows="5" placeholder="Sõnum" class="input" required></textarea>
+    <p id="message-error" style="color:#ff6b6b; font-size:0.9rem; display:none;">
+      Sõnum ei tohi olla tühi.
+    </p>
+
+    <button type="submit" class="btn">Saada sõnum</button>
+
+  </form>
+</div>
+
 
         </div>
       </section>
