@@ -131,5 +131,35 @@
 
     </div>
   </main>
+<script>
+document.getElementById("contact-form").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const message = document.getElementById("message").value.trim();
+
+  let valid = true;
+
+  // Emaili regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(email)) {
+    document.getElementById("email-error").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("email-error").style.display = "none";
+  }
+
+  if (message.length === 0) {
+    document.getElementById("message-error").style.display = "block";
+    valid = false;
+  } else {
+    document.getElementById("message-error").style.display = "none";
+  }
+
+  if (!valid) return;
+});
+</script>
+
 </body>
 </html>
