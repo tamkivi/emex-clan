@@ -130,36 +130,90 @@
       </footer>
 
     </div>
+      <div id="popup" style="
+  position:fixed;
+  top:50%; left:50%;
+  transform:translate(-50%, -50%) scale(0.8);
+  background:var(--card-bg);
+  padding:24px 32px;
+  border-radius:16px;
+  box-shadow:0 6px 16px rgba(0,0,0,0.35);
+  color:var(--text);
+  display:none;
+  opacity:0;
+  transition:all 0.35s ease;">
+  Sõnum on edastatud! 🎉
+     </div> <!-- container -->
   </main>
-<script>
-document.getElementById("contact-form").addEventListener("submit", function(e) {
-  e.preventDefault();
 
-  const email = document.getElementById("email").value.trim();
-  const message = document.getElementById("message").value.trim();
+  <!-- POPUP (ainus ja õiges kohas) -->
+  <div id="popup" style="
+    position:fixed;
+    top:50%; left:50%;
+    transform:translate(-50%, -50%) scale(0.8);
+    background:var(--card-bg);
+    padding:24px 32px;
+    border-radius:16px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.35);
+    color:var(--text);
+    display:none;
+    opacity:0;
+    transition:all 0.35s ease;">
+    Sõnum on edastatud! 🎉
+  </div>
 
-  let valid = true;
+  <script>
+  document.getElementById("contact-form").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-  // Emaili regex
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const email = document.getElementById("email").value.trim();
+    const message = document.getElementById("message").value.trim();
 
-  if (!emailRegex.test(email)) {
-    document.getElementById("email-error").style.display = "block";
-    valid = false;
-  } else {
-    document.getElementById("email-error").style.display = "none";
-  }
+    let valid = true;
 
-  if (message.length === 0) {
-    document.getElementById("message-error").style.display = "block";
-    valid = false;
-  } else {
-    document.getElementById("message-error").style.display = "none";
-  }
+    // Emaili regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!valid) return;
-});
-</script>
+    if (!emailRegex.test(email)) {
+      document.getElementById("email-error").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("email-error").style.display = "none";
+    }
+
+    if (message.length === 0) {
+      document.getElementById("message-error").style.display = "block";
+      valid = false;
+    } else {
+      document.getElementById("message-error").style.display = "none";
+    }
+
+    if (!valid) return;
+
+    // POPUP animatsioon
+    const popup = document.getElementById("popup");
+    popup.style.display = "block";
+
+    setTimeout(() => {
+      popup.style.opacity = "1";
+      popup.style.transform = "translate(-50%, -50%) scale(1)";
+    }, 10);
+
+    setTimeout(() => {
+      popup.style.opacity = "0";
+      popup.style.transform = "translate(-50%, -50%) scale(0.8)";
+    }, 2500);
+
+    setTimeout(() => {
+      popup.style.display = "none";
+    }, 3000);
+
+    // Vorm tühjaks
+    document.getElementById("name").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("message").value = "";
+  });
+  </script>
 
 </body>
 </html>
