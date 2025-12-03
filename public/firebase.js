@@ -31,7 +31,7 @@ const auth = getAuth(app);
 
 const globalScope = typeof window !== 'undefined' ? window : globalThis;
 const PRODUCTS_COLLECTION = 'products';
-const ADMIN_EMAILS = ['admin@1stopshop.ee', 'gustavpaul@tamkivi.com'].map((email) => email.toLowerCase());
+const ADMIN_EMAILS = ['gustavpaul@tamkivi.com', 'trists@taltech.ee'].map((email) => email.toLowerCase());
 
 function sanitizeProduct(product = {}) {
   return {
