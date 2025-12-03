@@ -64,38 +64,56 @@
     Kõik tooted on disainitud Eestis ning valmistatud keskkonnasõbralikult.
   </p>
 
-  <!-- Tiimigrid -->
-  <div class="category-list" style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px;">
+<!-- TIIMI RIDADES: PILT + NIMI KÕRVUTI -->
+  <div class="card" style="padding:24px; display:grid; gap:24px; margin-top:24px;">
 
-    <!-- ANIME STRIP FOTO -->
-    <div class="card" style="padding:0; overflow:hidden; height:420px;">
+   <section class="home-panel">
+  <h2 class="headline-tag">Meie missioon</h2>
+
+  <p class="lead" style="margin-top:12px;">
+    Meie eesmärk on tuua tudengiteni taskukohane, mugav ja kvaliteetne ülikoolimerch.
+    Kõik tooted on disainitud Eestis ning valmistatud keskkonnasõbralikult.
+  </p>
+
+  <div class="card" style="padding:24px; display:grid; gap:32px; margin-top:24px;">
+
+    <!-- RIDA 1 -->
+    <div style="display:flex; gap:24px; align-items:flex-start;">
       <img
-        <img
-  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMwAAAK0CAYAAABPzNJ3AAAMTmlDQ1BJQ0MgUHJvZmlsZQAASImVlwdYU8kWx+9NdpM0TZtpk2Sm6bRpk2SdZAEQgiCkCAgTAgUtVoqBrRRRQQFAgKnVtBVRUFUEBAoKPQUREFFCl1qV0VdVpXWud9P73bt/d+/t+e+71253zrkzZ87M3Lvvnc85c86cOXP27DsAANLhUZo4IkE4EECEBJJBgBHEASQSQRpVAeRZJkWZmIAABSYwAEBlBthFAVmg0SEHAAlrhAghEAQRQGAAKAGDUgCgCQKyhgwAHZpCUgsCEzoyAiAlFoMTfMJgjImt4rQ4ZgLxhgNIChRm8x392uvhzNTRAQAfluSt9JMKFMTh498V7T46p0AACYImZBsA7DeHh/g8H0+nxMAABIMcC8f/F7vNfBpGwBAMADEiloUfUuLwAAENGzfGPUwH8Gl5pskSQJABAkbx7j8fi43EeD8AQwP+fg5/W6z3e7AIwvfD048SkEAICN0hQ0E8MwCTRIEhKB6bJGggEAcAgZgJCUMAxhMiyK0gWQQIAKwY8HP6RML3xcdDABAKIGshSiACxNhIlFgAAqgAmbfCTlLwAAAMoITfgvC39jPCgDAYG4JIQ5gDUwNhtMYFAAAIiClegDaSupVn9zv1y7O3tbaiAcD7nzp3d/KUR0zJ3YinPnlWr1n784cP56zq7CJ58cHHvn0oPhaw2I3fvr07pCGPn58Y1dfLKXd2sFjJrcfKU5n12wVSlQbI7dJMd2vH2XJcY3t8UozstWwTutNHn3MvYUv39LItZmz1i1vPpfvJZLyWq2m0kk70VEnlA6H9UM+mvp5Z8nIfizFctk6ybbfVXlsNUYzE1M6yTNAXtfjczVeXoLYYdlK3Yx6r8bYMNVcG5E6W5/Dn/Zzr+d8nLVQzPYQ2repYsJFYZM8zbo5wZYUqsDvFbSXpkFMTaAKC4WDho"
-style="width:100%; height:100%; object-fit:cover; object-position:center; border-radius:18px;" />
-
-   style="width:100%; height:100%; object-fit:cover; object-position:center; border-radius:18px;"
+        src="anime1.jpg"
+        alt="Tristan"
+        style="width:320px; height:200px; object-fit:cover; border-radius:16px;"
       />
-    </div>
-
-    <!-- TIIMILIikmed -->
-    <div class="card" style="padding:20px; display:grid; gap:18px;">
-
       <div>
         <h3 style="margin:0; color:var(--accent);">Tristan Aik Sild</h3>
         <p class="lead" style="margin:4px 0;">Asutaja & Visionäär</p>
       </div>
+    </div>
 
+    <!-- RIDA 2 -->
+    <div style="display:flex; gap:24px; align-items:flex-start;">
+      <img
+        src="anime2.jpg"
+        alt="Gustav"
+        style="width:320px; height:200px; object-fit:cover; border-radius:16px;"
+      />
       <div>
         <h3 style="margin:0; color:var(--accent);">Gustav Paul Tamkivi</h3>
         <p class="lead" style="margin:4px 0;">Operatsioonijuht (COO)</p>
       </div>
+    </div>
 
+    <!-- RIDA 3 -->
+    <div style="display:flex; gap:24px; align-items:flex-start;">
+      <img
+        src="anime3.jpg"
+        alt="Mihkel"
+        style="width:320px; height:200px; object-fit:cover; border-radius:16px;"
+      />
       <div>
         <h3 style="margin:0; color:var(--accent);">Mihkel Anton</h3>
         <p class="lead" style="margin:4px 0;">Turundus & Brändiarendus</p>
       </div>
-
     </div>
 
   </div>
@@ -103,11 +121,30 @@ style="width:100%; height:100%; object-fit:cover; object-position:center; border
 
 
 
+
+
+
+
+
+
+
+
       <!-- KONTAKT -->
-      <section class="home-panel">
+      <div class="card" style="
+  padding:20px;
+  display:block;
+  width:50%;
+  max-width:600px;
+">
+
         <h2 class="headline-tag">Võta meiega ühendust</h2>
 
-        <div class="card" style="padding:20px; display:grid; gap:12px;">
+        <div class="card" style="
+  padding:16px 20px;
+  display:inline-block;
+  width:fit-content;
+  max-width:fit-content;">
+
           <p class="lead">
             📧 <b>E-post:</b>
             <a href="mailto:1stopshop@cool.com" style="color:var(--accent);">1stopshop@cool.com</a><br>
