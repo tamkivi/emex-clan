@@ -5,17 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login</title>
   <link rel="stylesheet" href="signup_style.css">
-  <style>
-    .error-message {
-      color: #ff4444;
-      font-size: 14px;
-      margin-top: 8px;
-      display: none;
-    }
-  </style>
 </head>
 <body>
   <div class="wrapper">
+    <a href="index.html" class="back-link">← Back</a>
     <h1>login</h1>
     <form id="form">
       <div>
@@ -32,17 +25,7 @@
         <input required type="password" name="password" id="password-input" placeholder="password">
       </div>
 
-      <div class="row">
-        <label class="checkbox">
-          <input id="remember" type="checkbox" /> Remember me
-        </label>
-        <a class="forgot" href="#">Forgot?</a>
-      </div>
-
       <button type="submit">login</button>
-      <div class="error-message" id="signinError"></div>
-
-      <p class="signup">Don't have an account? <a href="signup.html">Signup</a></p>
     </form>
   </div>
 

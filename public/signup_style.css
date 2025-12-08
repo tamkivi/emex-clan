@@ -13,6 +13,20 @@
   --accent-2: #8b5cf6;
   --hero-highlight: rgba(59, 130, 246, 0.18);
 }
+/* Add this to your signup_style.css file */
+.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
 
 body.theme-dark {
   color-scheme: dark;
@@ -271,4 +285,38 @@ body {
   --accent: #60a5fa;
   --accent-2: #a78bfa;
   --hero-highlight: rgba(96, 165, 250, 0.18);
+}
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    margin-top: 8px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.checkbox input[type="checkbox"] {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+}
+
+.forgot {
+    text-decoration: none;
+    color: var(--accent);
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.forgot:hover {
+    text-decoration: underline;
+    color: var(--accent-2);
 }
