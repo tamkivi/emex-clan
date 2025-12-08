@@ -7,8 +7,71 @@
     <link rel="stylesheet" href="signup_style.css">
 </head>
 <body>
-<div class="wrapper">
-  <button class="logout-btn" onclick="window.location.href='logout.php'">Log out</button>
+<div class="wrapper" style="text-align: center; padding: 60px 40px;">
+    <h1 style="margin-bottom: 16px; color: var(--text);">Log Out</h1>
+    <p style="color: var(--muted); margin-bottom: 32px; font-size: 16px; line-height: 1.5;">
+        Are you sure you want to log out?<br>
+        You'll need to sign in again to access your account.
+    </p>
+    
+    <div style="display: flex; flex-direction: column; gap: 16px; max-width: 300px; margin: 0 auto;">
+        <button 
+            class="logout-btn" 
+            onclick="handleLogout()"
+            style="width: 100%; padding: 16px 24px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: lowercase;">
+            Yes, Log Out
+        </button>
+        
+        <button 
+            onclick="window.location.href='main.html'"
+            style="width: 100%; padding: 16px 24px; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-transform: lowercase;">
+            Cancel
+        </button>
+    </div>
 </div>
+
+<script>
+    function handleLogout() {
+        // If you have Firebase authentication, you would sign out here
+        // Example: 
+        // import { auth, signOut } from './firebase.js';
+        // await signOut(auth);
+        
+        // For now, just redirect to main page
+        // If you need to clear any session data, do it here
+        // localStorage.removeItem('userToken'); // Example
+        
+        window.location.href = 'index.html';
+    }
+    
+    // Add hover effects
+    document.querySelectorAll('button').forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            if (this.classList.contains('logout-btn')) {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = 'var(--shadow-strong)';
+                this.style.filter = 'brightness(1.1)';
+            } else {
+                this.style.background = 'var(--surface-alt)';
+                this.style.color = 'var(--text)';
+            }
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            if (this.classList.contains('logout-btn')) {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+                this.style.filter = 'brightness(1)';
+            } else {
+                this.style.background = 'transparent';
+                this.style.color = 'var(--muted)';
+            }
+        });
+        
+        button.addEventListener('mousedown', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+</script>
 </body>
 </html>
