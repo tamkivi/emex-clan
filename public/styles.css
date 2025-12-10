@@ -412,3 +412,38 @@ footer { color: var(--muted); font-size: .9rem; text-align: center; padding: 24p
 .quick-card { text-align: left; }
 .quick-card img { width: 72px; height: 72px; border-radius: 16px; margin-bottom: 12px; background: var(--surface-alt); }
 .quick-card .badge { position: static; display: inline-block; }
+
+
+.map-button-wrapper {
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+
+
+.map-btn {
+    display: inline-block;
+    text-decoration: none;
+}
+
+map-btn {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(6px);
+}
+
+
+
+}
+
+}
+
+
+.map-btn:hover,
+.back-btn:hover,
+.btn:hover {
+    transform: translateY(-2px) scale(1.04);
+    opacity: 0.95;
+    background: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
