@@ -4,10 +4,10 @@
 
 The webstore now reads and writes every product through Firebase Firestore.
 
-1. Copy `firebase-config.example.js` to `firebase-config.js` and fill it with your Firebase project's client config (API key, projectId, etc.). The file is ignored from git but loaded in both `index.html` files before `firebase.js`.
+1. Copy `firebase-config.example.js` to `firebase-config.js` and fill it with your Firebase project's client config (API key, projectId, etc.). The file is ignored from git but loaded before `firebase.js` inside `main.html`.
 2. Install dependencies (`npm install`) so local tooling (ESLint, optional scripts) works if you need it.
 
-If Firebase is not configured, the site shows an alert and no products are rendered (there is no longer any local fallback data).
+If Firebase is not configured, the site shows an alert and no products are rendered (there is no longer any local fallback data; `main.html` stays empty).
 
 ## Getting started
 
