@@ -4,6 +4,7 @@ import {
   auth,
   onAuthStateChanged,
   isAdminEmail,
+  signOut,
 } from './firebase.js';
 
 const bodyEl = document.body;
@@ -67,12 +68,15 @@ function cacheDom() {
   els.settingsBtn = document.getElementById('settingsBtn');
   els.notificationsBtn = document.getElementById('notificationsBtn');
   els.cartBtn = document.getElementById('cartBtn');
+  els.cartBtnBadge = document.getElementById('cartButtonBadge');
   els.quickActionsPanel = document.getElementById('quickActionsPanel');
   els.scrollGallery = document.querySelector('.scroll-gallery');
   els.samplesSection = document.getElementById('samplesSection');
   els.samplesToggle = document.getElementById('samplesToggle');
   els.samplesDropdown = document.getElementById('samplesDropdown');
   els.profileEmail = document.getElementById('profileEmail');
+  els.authSignedOutLinks = document.querySelectorAll('[data-auth="signed-out"]');
+  els.signOutBtn = document.getElementById('signOutBtn');
 }
 
 function normaliseProduct(product = {}) {
@@ -180,6 +184,7 @@ function createProductCard(product) {
   const card = document.createElement('article');
   card.className = 'card';
   card.dataset.productId = product.id;
+  card.dataset.productTrigger = 'modal';
 
   const img = document.createElement('img');
   img.src = product.image;
@@ -364,6 +369,7 @@ function renderFeatured() {
     button.className = 'sample-item';
     button.type = 'button';
     button.dataset.productId = product.id;
+    button.dataset.productTrigger = 'modal';
 
     const img = document.createElement('img');
     img.src = product.image;
@@ -462,19 +468,28 @@ function renderCart() {
 }
 
 function updateQuickActionCartBadge() {
-  const quickCard = els.quickActionsPanel?.querySelector('[data-quick-card="cart"]');
-  if (!quickCard) return;
-  let badge = quickCard.querySelector('.badge');
   const count = getCartCount();
-  if (count > 0) {
-    if (!badge) {
-      badge = document.createElement('div');
-      badge.className = 'badge';
-      quickCard.prepend(badge);
+  const quickCard = els.quickActionsPanel?.querySelector('[data-quick-card="cart"]');
+  if (quickCard) {
+    let badge = quickCard.querySelector('.badge');
+    if (count > 0) {
+      if (!badge) {
+        badge = document.createElement('div');
+        badge.className = 'badge';
+        quickCard.prepend(badge);
+      }
+      badge.textContent = String(count);
+    } else if (badge) {
+      badge.remove();
     }
-    badge.textContent = String(count);
-  } else if (badge) {
-    badge.remove();
+  }
+  if (els.cartBtnBadge) {
+    if (count > 0) {
+      els.cartBtnBadge.textContent = String(count);
+      els.cartBtnBadge.hidden = false;
+    } else {
+      els.cartBtnBadge.hidden = true;
+    }
   }
 }
 
@@ -572,6 +587,16 @@ function updateAuthUi() {
     const canViewAdmin = currentUserIsAdmin;
     els.openAdmin.style.display = canViewAdmin ? '' : 'none';
     els.openAdmin.setAttribute('aria-disabled', String(!canViewAdmin));
+  }
+  const isSignedIn = Boolean(currentUser);
+  if (els.authSignedOutLinks?.length) {
+    els.authSignedOutLinks.forEach((link) => {
+      link.style.display = isSignedIn ? 'none' : '';
+    });
+  }
+  if (els.signOutBtn) {
+    els.signOutBtn.style.display = isSignedIn ? '' : 'none';
+    els.signOutBtn.hidden = !isSignedIn;
   }
 }
 
@@ -719,7 +744,7 @@ function handleCartListChange(event) {
 }
 
 function handleDocumentClick(event) {
-  const productTarget = event.target.closest('[data-product-id]');
+  const productTarget = event.target.closest('[data-product-id][data-product-trigger="modal"]');
   if (productTarget) {
     openProductModal(productTarget.dataset.productId);
   }
@@ -813,6 +838,14 @@ function bindUI() {
   els.sendLoginLink?.addEventListener('click', () => window.alert('Sisselogimislink on saadetud (demo).'));
   els.openHelp?.addEventListener('click', () => window.alert('Avaksime KKK lehe (demo).'));
   els.reportIssue?.addEventListener('click', () => window.alert('Täname tagasiside eest! (demo)'));
+  els.signOutBtn?.addEventListener('click', async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Failed to sign out', error);
+      window.alert('Väljalogimine ebaõnnestus. Palun proovi uuesti.');
+    }
+  });
 
   els.adminProductForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
