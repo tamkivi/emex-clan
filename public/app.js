@@ -14,6 +14,8 @@ function getFirebaseProductsService() {
   return firebaseProductsServiceInstance;
 }
 let unsubscribeProductListener = null;
+let galleryAnimationFrame = null;
+let galleryScrollPosition = 0;
 let currentUser = null;
 let currentUserIsAdmin = false;
 
@@ -66,6 +68,10 @@ function cacheDom() {
   els.notificationsBtn = document.getElementById('notificationsBtn');
   els.cartBtn = document.getElementById('cartBtn');
   els.quickActionsPanel = document.getElementById('quickActionsPanel');
+  els.scrollGallery = document.querySelector('.scroll-gallery');
+  els.samplesSection = document.getElementById('samplesSection');
+  els.samplesToggle = document.getElementById('samplesToggle');
+  els.samplesDropdown = document.getElementById('samplesDropdown');
   els.profileEmail = document.getElementById('profileEmail');
 }
 
@@ -77,7 +83,6 @@ function normaliseProduct(product = {}) {
     price: Number.isFinite(priceNumber) ? priceNumber : 0,
     category: product.category || 'Määramata',
     description: product.description || '',
-    image: product.image || 'https://images.pexels.com/photos/715688/pexels-photo-715688.jpeg?auto=compress&cs=tinysrgb&h=600',
     image: product.image || 'https://images.pexels.com/photos/715688/pexels-photo-715688.jpeg?auto=compress&cs=tinysrgb&h=600',
     featured: Boolean(product.featured),
     adult: Boolean(product.adult),
@@ -242,19 +247,16 @@ function renderQuickActions() {
   if (!container) return;
   container.innerHTML = '';
 
-  const section = document.createElement('div');
-  section.className = 'category-section quick-actions';
-
   const top = document.createElement('div');
-  top.className = 'category-top';
+  top.className = 'quick-actions__header';
   const title = document.createElement('h3');
-  title.className = 'category-title';
+  title.className = 'quick-actions__title';
   title.textContent = 'Kiirtoimingud';
   top.append(title);
-  section.append(top);
+  container.append(top);
 
   const grid = document.createElement('div');
-  grid.className = 'category-grid';
+  grid.className = 'quick-actions__grid';
 
   grid.append(
     createQuickCard({
@@ -279,8 +281,7 @@ function renderQuickActions() {
     }),
   );
 
-  section.append(grid);
-  container.append(section);
+  container.append(grid);
   updateQuickActionCartBadge();
 }
 
@@ -509,11 +510,58 @@ function renderAdminTable() {
 function renderEverything() {
   renderCategoryOptions();
   renderQuickActions();
+  renderGallery();
   renderCategories();
   renderFeatured();
   renderCart();
   renderStats();
   renderAdminTable();
+}
+
+function renderGallery() {
+  const gallery = els.scrollGallery;
+  if (!gallery) return;
+  gallery.innerHTML = '';
+  if (!Array.isArray(state.products) || state.products.length === 0) return;
+  const productsLooped = [...state.products, ...state.products, ...state.products];
+  let rendered = 0;
+  productsLooped.forEach((product) => {
+    if (!product.image) return;
+    const img = document.createElement('img');
+    img.src = product.image;
+    img.alt = product.name || 'Toode';
+    gallery.append(img);
+    rendered += 1;
+  });
+  console.log('Gallery rendered with', rendered, 'images');
+
+  galleryScrollPosition = 0;
+  gallery.scrollLeft = 0;
+  if (galleryAnimationFrame) {
+    cancelAnimationFrame(galleryAnimationFrame);
+    galleryAnimationFrame = null;
+  }
+  const loopWidth = gallery.scrollWidth / 3 || gallery.scrollWidth;
+  const speed = 0.7;
+
+  const step = () => {
+    galleryScrollPosition += speed;
+    if (galleryScrollPosition >= loopWidth) {
+      galleryScrollPosition -= loopWidth;
+    }
+    gallery.scrollLeft = galleryScrollPosition;
+    galleryAnimationFrame = window.requestAnimationFrame(step);
+  };
+  galleryAnimationFrame = window.requestAnimationFrame(step);
+}
+
+function toggleSamplesDropdown(forceState) {
+  const section = els.samplesSection;
+  const toggle = els.samplesToggle;
+  if (!section || !toggle) return;
+  const isOpen = typeof forceState === 'boolean' ? forceState : !section.classList.contains('samples-open');
+  section.classList.toggle('samples-open', isOpen);
+  toggle.setAttribute('aria-expanded', String(isOpen));
 }
 
 function updateAuthUi() {
@@ -749,6 +797,7 @@ function bindUI() {
       applyTheme();
     });
   });
+  els.samplesToggle?.addEventListener('click', () => toggleSamplesDropdown());
 
   els.viewCartShortcut?.addEventListener('click', () => showView('ostukorv'));
   els.openAdmin?.addEventListener('click', () => {
@@ -840,6 +889,7 @@ function initialiseUi() {
   populatePreferenceControls();
   renderEverything();
   bindUI();
+  toggleSamplesDropdown(false);
   startFlow();
   updateAuthUi();
 }
