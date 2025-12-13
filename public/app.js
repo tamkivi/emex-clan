@@ -15,8 +15,6 @@ function getFirebaseProductsService() {
   return firebaseProductsServiceInstance;
 }
 let unsubscribeProductListener = null;
-let galleryAnimationFrame = null;
-let galleryScrollPosition = 0;
 let currentUser = null;
 let currentUserIsAdmin = false;
 let inlineContactToastTimer = null;
@@ -571,36 +569,20 @@ function renderGallery() {
   if (!gallery) return;
   gallery.innerHTML = '';
   if (!Array.isArray(state.products) || state.products.length === 0) return;
-  const productsLooped = [...state.products, ...state.products, ...state.products];
-  let rendered = 0;
-  productsLooped.forEach((product) => {
-    if (!product.image) return;
+  const baseProducts = state.products.filter((product) => Boolean(product.image));
+  if (baseProducts.length === 0) return;
+  const track = document.createElement('div');
+  track.className = 'scroll-gallery__track';
+  const loopedProducts = [...baseProducts, ...baseProducts];
+  loopedProducts.forEach((product) => {
     const img = document.createElement('img');
     img.src = product.image;
     img.alt = product.name || 'Toode';
-    gallery.append(img);
-    rendered += 1;
+    track.append(img);
   });
-  console.log('Gallery rendered with', rendered, 'images');
-
-  galleryScrollPosition = 0;
-  gallery.scrollLeft = 0;
-  if (galleryAnimationFrame) {
-    cancelAnimationFrame(galleryAnimationFrame);
-    galleryAnimationFrame = null;
-  }
-  const loopWidth = gallery.scrollWidth / 3 || gallery.scrollWidth;
-  const speed = 0.7;
-
-  const step = () => {
-    galleryScrollPosition += speed;
-    if (galleryScrollPosition >= loopWidth) {
-      galleryScrollPosition -= loopWidth;
-    }
-    gallery.scrollLeft = galleryScrollPosition;
-    galleryAnimationFrame = window.requestAnimationFrame(step);
-  };
-  galleryAnimationFrame = window.requestAnimationFrame(step);
+  const duration = Math.max(24, baseProducts.length * 3);
+  track.style.setProperty('--gallery-duration', `${duration}s`);
+  gallery.append(track);
 }
 
 function toggleSamplesDropdown(forceState) {
@@ -914,7 +896,14 @@ function bindUI() {
   els.cartBtn?.addEventListener('click', () => showView('ostukorv'));
   els.sendLoginLink?.addEventListener('click', () => window.alert('Sisselogimislink on saadetud (demo).'));
   els.openHelp?.addEventListener('click', () => window.alert('Avaksime KKK lehe (demo).'));
-  els.reportIssue?.addEventListener('click', () => window.alert('Täname tagasiside eest! (demo)'));
+  els.reportIssue?.addEventListener('click', () => {
+    showView('contacts');
+    window.requestAnimationFrame(() => {
+      els.inlineContactForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const emailInput = els.inlineContactForm?.querySelector('input[name="email"]');
+      emailInput?.focus();
+    });
+  });
   els.signOutBtn?.addEventListener('click', async () => {
     try {
       await signOut(auth);
