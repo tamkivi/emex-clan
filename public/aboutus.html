@@ -20,13 +20,13 @@
           </div>
 
           <nav class="header-meta">
-            <ul class="header-actions" style="list-style:none; margin:0; padding:0; display:flex; gap:16px;">
-              <li><a href="main.html">Avaleht</a></li>
-              <li><a href="main.html">Pood</a></li>
-              <li><a href="aboutus.html" style="color:var(--accent); font-weight:600;">Meist</a></li>
-              <li><a href="contacts.html">Kontakt</a></li>
-              <li><a href="signup.html">Sign up</a></li>
-              <li><a href="signin.html">Sign in</a></li>
+            <ul class="header-nav">
+              <li><a href="main.html" class="header-nav__link">Avaleht</a></li>
+              <li><a href="main.html#categoryList" class="header-nav__link">Pood</a></li>
+              <li><a href="aboutus.html" class="header-nav__link active">Meist</a></li>
+              <li><a href="contacts.html" class="header-nav__link">Kontakt</a></li>
+              <li><a href="signup.html" class="header-nav__link">Sign up</a></li>
+              <li><a href="signin.html" class="header-nav__link">Sign in</a></li>
             </ul>
           </nav>
 
@@ -175,5 +175,13 @@
 
     </div>
   </main>
+  <script>
+    (function applySavedTheme() {
+      const saved = localStorage.getItem('theme');
+      const theme = saved === 'light' ? 'light' : 'dark';
+      document.body.classList.remove('theme-light', 'theme-dark');
+      document.body.classList.add(`theme-${theme}`);
+    })();
+  </script>
 </body>
 </html>
