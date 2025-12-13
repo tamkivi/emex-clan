@@ -1,243 +1,26 @@
 <!DOCTYPE html>
 <html lang="et">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kontakt – 1stopshop</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-
-<body class="theme-dark">
-  <main class="view home active">
-    <div class="container">
-
-      <!-- NAVIGAATSIOON -->
-      <div class="sticky-header">
-  <div class="header">
-    <div class="logo">
-      <a href="main.html">1stop<i>shop</i></a>
-    </div>
-
-    <nav class="header-meta">
-      <ul class="header-nav">
-        <li><a href="main.html" class="header-nav__link">Avaleht</a></li>
-        <li><a href="main.html#categoryList" class="header-nav__link">Pood</a></li>
-        <li><a href="aboutus.html" class="header-nav__link">Meist</a></li>
-        <li><a href="contacts.html" class="header-nav__link active">Kontakt</a></li>
-        <li><a href="signup.html" class="header-nav__link">Sign up</a></li>
-        <li><a href="signin.html" class="header-nav__link">Sign in</a></li>
-      </ul>
-    </nav>
-
-    <div class="header-meta">
-      <div class="headline-tag">📮 Võta ühendust</div>
-    </div>
-  </div>
-</div>
-
-
-      <!-- KONTAKT BANNER -->
-      <section class="home-panel hero">
-        <div class="home-hero">
-          <div class="shop-title">Kontakt</div>
-          <p class="lead">Küsimused? Kirjuta meile – vastame nii kiiresti kui võimalik.</p>
-        </div>
-      </section>
-
-      <!-- KONTAKTIPANEEL -->
-      <section class="home-panel">
-        <div class="category-list"
-             style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:20px;">
-
-          <!-- Kontaktinfo -->
-          <div class="card" style="padding:20px; display:grid; gap:12px;">
-            <h3>Meie kontaktid</h3>
-
-            <p>
-              <strong>E-post:</strong><br>
-              <a href="mailto:1stopshop@cool.com" style="color:var(--accent)">
-                1stopshop@cool.com
-              </a>
-            </p>
-
-            <p>
-              <strong>Instagram:</strong><br>
-              <a href="https://instagram.com/1stopshopburner"
-                 style="color:var(--accent)">
-                @1stopshopburner
-              </a>
-            </p>
-
-            <p>
-              <strong>Telefon:</strong><br>
-              +372 5555 1234
-            </p>
-
-            <p>
-              <strong>Aadress:</strong><br>
-              Akadeemia tee 5, Tallinn 12611
-            </p>
-          </div>
-
-          <!-- Sõnumivorm -->
-          <div class="card" style="padding:20px; display:grid; gap:14px;">
-  <h3>Saada sõnum</h3>
-
-  <form id="contact-form" style="display:grid; gap:14px;">
-
-    <input type="text" id="name" placeholder="Sinu nimi" class="input" required>
-
-    <input type="email" id="email" placeholder="Sinu e-post" class="input" required>
-    <p id="email-error" style="color:#ff6b6b; font-size:0.9rem; display:none;">
-      Palun sisesta korrektne email.
-    </p>
-
-    <textarea id="message" rows="5" placeholder="Sõnum" class="input" required></textarea>
-    <p id="message-error" style="color:#ff6b6b; font-size:0.9rem; display:none;">
-      Sõnum ei tohi olla tühi.
-    </p>
-
-    <button type="submit" class="btn">Saada sõnum</button>
-
-  </form>
-</div>
-
-
-        </div>
-      </section>
-
-      <!-- KAART -->
-      <section class="home-panel">
-        <h2 class="headline-tag">Asukoht</h2>
-        <p class="lead">Asume TalTechi vahetus läheduses.</p>
-
-        <div class="map-card" style="margin-top:20px; border-radius:16px; overflow:hidden;">
-  <iframe
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2033.6525140384965!2d24.67130987728552!3d59.39654990344195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46929505c6ed1c0f%3A0xa1125453e5b769c!2sAkadeemia%20tee%205%2C%2012611%20Tallinn!5e0!3m2!1set!2see!4v1732570000000"
-    width="100%"
-    height="350"
-    style="border:0; border-radius:16px; box-shadow:var(--shadow);"
-    allowfullscreen=""
-    loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade">
-  </iframe>
-</div>
-
-<div class="map-button-wrapper">
-  <a href="https://www.google.com/maps?q=59.3965499,24.6713098"
-     target="_blank"
-     class="btn map-btn">
-    📍 Ava Google Mapsis
-  </a>
-</div>
-
-
-
-
-
-
-      </section>
-<div class="back-btn-outside">
-  <a href="main.html" class="btn back-btn">← Tagasi avalehele</a>
-</div>
-       
-      <!-- JALUS -->
-      <footer style="text-align:center; color:var(--muted); padding:40px 0;">
-        © 2025 1stopshop – Kõik õigused kaitstud
-      </footer>
-
-    </div>
-      <div id="popup" style="
-  position:fixed;
-  top:50%; left:50%;
-  transform:translate(-50%, -50%) scale(0.8);
-  background:var(--card-bg);
-  padding:24px 32px;
-  border-radius:16px;
-  box-shadow:0 6px 16px rgba(0,0,0,0.35);
-  color:var(--text);
-  display:none;
-  opacity:0;
-  transition:all 0.35s ease;">
-  Sõnum on edastatud! 🎉
-     </div> <!-- container -->
-  </main>
-
-  <!-- POPUP (ainus ja õiges kohas) -->
-  <div id="popup" style="
-    position:fixed;
-    top:50%; left:50%;
-    transform:translate(-50%, -50%) scale(0.8);
-    background:var(--card-bg);
-    padding:24px 32px;
-    border-radius:16px;
-    box-shadow:0 6px 16px rgba(0,0,0,0.35);
-    color:var(--text);
-    display:none;
-    opacity:0;
-    transition:all 0.35s ease;">
-    Sõnum on edastatud! 🎉
-  </div>
-
+  <meta charset="UTF-8">
+  <title>1stopshop – Kontakt</title>
+  <meta http-equiv="refresh" content="0;url=main.html?view=contacts">
   <script>
-  (function applySavedTheme() {
-    const saved = localStorage.getItem('theme');
-    const theme = saved === 'light' ? 'light' : 'dark';
-    document.body.classList.remove('theme-light', 'theme-dark');
-    document.body.classList.add(`theme-${theme}`);
-  })();
-
-  document.getElementById("contact-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value.trim();
-    const message = document.getElementById("message").value.trim();
-
-    let valid = true;
-
-    // Emaili regex
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(email)) {
-      document.getElementById("email-error").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("email-error").style.display = "none";
-    }
-
-    if (message.length === 0) {
-      document.getElementById("message-error").style.display = "block";
-      valid = false;
-    } else {
-      document.getElementById("message-error").style.display = "none";
-    }
-
-    if (!valid) return;
-
-    // POPUP animatsioon
-    const popup = document.getElementById("popup");
-    popup.style.display = "block";
-
-    setTimeout(() => {
-      popup.style.opacity = "1";
-      popup.style.transform = "translate(-50%, -50%) scale(1)";
-    }, 10);
-
-    setTimeout(() => {
-      popup.style.opacity = "0";
-      popup.style.transform = "translate(-50%, -50%) scale(0.8)";
-    }, 2500);
-
-    setTimeout(() => {
-      popup.style.display = "none";
-    }, 3000);
-
-    // Vorm tühjaks
-    document.getElementById("name").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("message").value = "";
-  });
+    window.location.replace('main.html?view=contacts');
   </script>
-
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    a { color: #93c5fd; }
+  </style>
+</head>
+<body>
+  <p>Suunan teid Kontakt vaatesse… Kui see ei juhtu, <a href="main.html?view=contacts">klõpsake siin</a>.</p>
 </body>
 </html>

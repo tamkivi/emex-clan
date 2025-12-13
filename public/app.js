@@ -10,6 +10,7 @@ import {
 const bodyEl = document.body;
 const views = {};
 const els = {};
+const shareableViews = new Set(['home', 'aboutus', 'contacts']);
 let firebaseProductsReady = false;
 function getFirebaseProductsService() {
   return firebaseProductsServiceInstance;
@@ -182,6 +183,39 @@ function setActiveNav(viewName) {
     if (!targetView) return;
     link.classList.toggle('active', targetView === normalized);
   });
+}
+
+function getInitialViewFromUrl() {
+  try {
+    const url = new URL(window.location.href);
+    const paramView = url.searchParams.get('view');
+    if (paramView && shareableViews.has(paramView)) {
+      return paramView;
+    }
+    const hashView = url.hash?.replace('#', '');
+    if (hashView && shareableViews.has(hashView)) {
+      return hashView;
+    }
+  } catch (error) {
+    console.warn('Failed to parse initial view from URL', error);
+  }
+  return 'home';
+}
+
+function updateShareableUrl(viewName) {
+  if (!window.history?.replaceState) return;
+  try {
+    const url = new URL(window.location.href);
+    if (viewName && shareableViews.has(viewName) && viewName !== 'home') {
+      url.searchParams.set('view', viewName);
+    } else {
+      url.searchParams.delete('view');
+    }
+    url.hash = '';
+    window.history.replaceState(null, '', url.toString());
+  } catch (error) {
+    console.warn('Failed to update URL for view', error);
+  }
 }
 
 function renderCategoryOptions() {
@@ -653,6 +687,11 @@ function showView(name) {
   if (!target) return;
   target.classList.add('active');
   setActiveNav(name);
+  if (shareableViews.has(name)) {
+    updateShareableUrl(name);
+  } else if (name !== 'welcome') {
+    updateShareableUrl(null);
+  }
   if (name === 'ostukorv') {
     renderCart();
   }
@@ -977,10 +1016,10 @@ function bindUI() {
   });
 }
 
-function startFlow() {
+function startFlow(nextView = 'home') {
   showView('welcome');
   clearTimeout(welcomeTimeout);
-  welcomeTimeout = window.setTimeout(() => showView('home'), 1600);
+  welcomeTimeout = window.setTimeout(() => showView(nextView), 1600);
 }
 
 function initialiseUi() {
@@ -990,7 +1029,9 @@ function initialiseUi() {
   renderEverything();
   bindUI();
   toggleSamplesDropdown(false);
-  startFlow();
+  const initialView = getInitialViewFromUrl();
+  startFlow(initialView);
+  setActiveNav(initialView);
   updateAuthUi();
 }
 
