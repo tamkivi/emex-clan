@@ -1,5 +1,4 @@
 import {
-  loadProductsFromFirestore,
   firebaseProductsService as firebaseProductsServiceInstance,
   auth,
   onAuthStateChanged,
@@ -1038,12 +1037,9 @@ function initialiseUi() {
 async function initApp() {
   console.log('initApp starting…');
   try {
-    const products = await loadProductsFromFirestore();
-    console.log('Loaded products from Firestore:', products);
-    renderProducts(products);
     await subscribeToRemoteProducts();
   } catch (err) {
-    console.error('Failed to load products from Firestore', err);
+    console.error('Failed to subscribe to products from Firestore', err);
   }
 }
 
