@@ -253,6 +253,9 @@ body {
   margin: 0 0 20px;
   box-shadow: var(--panel-shadow);
   backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: homePanelIn .9s ease forwards;
 }
 .home-panel.hero { display: grid; gap: 14px; }
 .home-hero { display: grid; gap: 12px; text-align: center; }
@@ -706,4 +709,25 @@ map-btn {
     opacity: 0.95;
     background: rgba(255, 255, 255, 0.10);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+.home-panel:nth-of-type(1) { animation-delay: .15s; }
+.home-panel:nth-of-type(2) { animation-delay: .25s; }
+.home-panel:nth-of-type(3) { animation-delay: .35s; }
+.home-panel:nth-of-type(4) { animation-delay: .45s; }
+.home-panel:nth-of-type(5) { animation-delay: .55s; }
+.home-panel:nth-of-type(6) { animation-delay: .65s; }
+.home-panel:nth-of-type(7) { animation-delay: .75s; }
+.home-panel:nth-of-type(8) { animation-delay: .85s; }
+.home-panel:nth-of-type(9) { animation-delay: .95s; }
+.home-panel:nth-of-type(10) { animation-delay: 1.05s; }
+
+@keyframes homePanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

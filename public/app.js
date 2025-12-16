@@ -1038,7 +1038,7 @@ function bindUI() {
 function startFlow(nextView = 'home') {
   showView('welcome');
   clearTimeout(welcomeTimeout);
-  welcomeTimeout = window.setTimeout(() => showView(nextView), 1600);
+  welcomeTimeout = window.setTimeout(() => showView(nextView), 2600);
 }
 
 function initialiseUi() {

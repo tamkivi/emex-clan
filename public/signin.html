@@ -35,6 +35,12 @@
 <div class="forgot-wrapper">
    <a href="forgot_password.html">Forgot password?</a>
 </div>
+<div class="remember-wrapper">
+  <label>
+    <input type="checkbox" id="remember">
+    Remember me
+  </label>
+</div>
 
       <button type="submit">login</button>
       <div class="error-message" id="signinError"></div>
@@ -48,6 +54,16 @@
 
     const formEl = document.getElementById('form');
     const signinError = document.getElementById('signinError');
+    const rememberInput = document.getElementById('remember');
+    const emailInput = document.getElementById('email-input');
+
+    const savedEmail = localStorage.getItem('preferredEmail');
+    if (savedEmail) {
+      emailInput.value = savedEmail;
+      if (rememberInput) {
+        rememberInput.checked = true;
+      }
+    }
 
     function formatLoginError(error) {
       const code = error?.code || '';
@@ -67,9 +83,9 @@
       signinError.style.display = 'none';
       signinError.textContent = '';
 
-      const email = document.getElementById('email-input').value.trim();
+      const email = emailInput.value.trim();
       const password = document.getElementById('password-input').value;
-      const rememberMe = document.getElementById('remember').checked;
+      const rememberMe = rememberInput ? rememberInput.checked : false;
 
       if (!email || !password) {
         signinError.textContent = 'Palun täida kõik väljad.';
