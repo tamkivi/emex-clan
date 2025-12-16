@@ -10,7 +10,7 @@ import {
 const bodyEl = document.body;
 const views = {};
 const els = {};
-const shareableViews = new Set(['home', 'aboutus', 'contacts']);
+const shareableViews = new Set(['home', 'aboutus', 'contacts', 'faq']);
 let firebaseProductsReady = false;
 function getFirebaseProductsService() {
   return firebaseProductsServiceInstance;
@@ -36,6 +36,7 @@ function cacheDom() {
   views.settings = document.getElementById('view-settings');
   views.aboutus = document.getElementById('view-aboutus');
   views.contacts = document.getElementById('view-contacts');
+  views.faq = document.getElementById('view-faq');
   views.admin = document.getElementById('view-admin');
 
   els.categoryList = document.getElementById('categoryList');
@@ -64,7 +65,6 @@ function cacheDom() {
   els.viewCartShortcut = document.getElementById('viewCartShortcut');
   els.openAdmin = document.getElementById('openAdmin');
   els.sendLoginLink = document.getElementById('sendLoginLink');
-  els.openHelp = document.getElementById('openHelp');
   els.reportIssue = document.getElementById('reportIssue');
   els.categoryOptions = document.getElementById('categoryOptions');
   els.settingsBtn = document.getElementById('settingsBtn');
@@ -934,7 +934,6 @@ function bindUI() {
   els.notificationsBtn?.addEventListener('click', () => showView('teated'));
   els.cartBtn?.addEventListener('click', () => showView('ostukorv'));
   els.sendLoginLink?.addEventListener('click', () => window.alert('Sisselogimislink on saadetud (demo).'));
-  els.openHelp?.addEventListener('click', () => window.alert('Avaksime KKK lehe (demo).'));
   els.reportIssue?.addEventListener('click', () => {
     showView('contacts');
     window.requestAnimationFrame(() => {
