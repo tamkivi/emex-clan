@@ -76,6 +76,7 @@ function cacheDom() {
   els.samplesToggle = document.getElementById('samplesToggle');
   els.samplesDropdown = document.getElementById('samplesDropdown');
   els.profileEmail = document.getElementById('profileEmail');
+  els.profileLoginInfo = document.getElementById('profileLoginInfo');
   els.authSignedOutLinks = document.querySelectorAll('[data-auth="signed-out"]');
   els.signOutBtn = document.getElementById('signOutBtn');
   els.navViewLinks = document.querySelectorAll('[data-view-target]');
@@ -172,6 +173,18 @@ function getCategories() {
 
 function getCartCount() {
   return state.cart.reduce((total, item) => total + item.quantity, 0);
+}
+
+function formatLastLogin(user) {
+  const timestamp = user?.metadata?.lastSignInTime;
+  if (!timestamp) return null;
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat('et-EE', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  }).format(date);
 }
 
 function setActiveNav(viewName) {
@@ -631,6 +644,12 @@ function updateAuthUi() {
   if (els.profileEmail) {
     els.profileEmail.textContent = currentUser?.email || 'Külaline';
   }
+  if (els.profileLoginInfo) {
+    const formatted = currentUser ? formatLastLogin(currentUser) : null;
+    els.profileLoginInfo.textContent = formatted
+      ? `Viimati sisse logitud: ${formatted}`
+      : 'Pole veel sisse logitud';
+  }
   if (els.openAdmin) {
     const canViewAdmin = currentUserIsAdmin;
     els.openAdmin.style.display = canViewAdmin ? '' : 'none';
@@ -942,7 +961,8 @@ function bindUI() {
       emailInput?.focus();
     });
   });
-  els.signOutBtn?.addEventListener('click', async () => {
+  els.signOutBtn?.addEventListener('click', async (event) => {
+    event.preventDefault();
     try {
       await signOut(auth);
     } catch (error) {
