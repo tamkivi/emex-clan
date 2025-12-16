@@ -21,9 +21,9 @@
           <div class="logo">1stop<i>shop</i></div>
           <nav class="header-meta">
             <ul class="header-nav">
-              <li><a href="main.html" class="header-nav__link active">Avaleht</a></li>
-              <li><a href="aboutus.html" class="header-nav__link">Meist</a></li>
-              <li><a href="contacts.html" class="header-nav__link">Kontakt</a></li>
+              <li><a href="#" class="header-nav__link active" data-view-target="home">Avaleht</a></li>
+              <li><a href="#" class="header-nav__link" data-view-target="aboutus">Meist</a></li>
+              <li><a href="#" class="header-nav__link" data-view-target="contacts">Kontakt</a></li>
               <li><a href="signup.html" class="header-nav__link" data-auth="signed-out">Sign up</a></li>
               <li><a href="signin.html" class="header-nav__link" data-auth="signed-out">Sign in</a></li>
               <li><button class="header-nav__link header-nav__link--button" id="signOutBtn" type="button" data-auth="signed-in" hidden>Logi välja</button></li>
@@ -237,6 +237,140 @@
           <p class="settings-hint">24/7 klienditugi: support@1stopshop.ee või +372 600 1234.</p>
         </article>
       </div>
+    </div>
+  </section>
+
+  <section id="view-aboutus" class="view">
+    <div class="container">
+      <div class="subhead">
+        <button class="back" data-back>← Tagasi</button>
+        <h2>Meist</h2>
+      </div>
+      <section class="home-panel hero">
+        <div class="home-hero">
+          <div class="shop-title">1stopshop</div>
+          <p class="lead">Disainitud tudengite poolt. Uhkusega kandmiseks.</p>
+        </div>
+        <p class="lead">
+          Oleme tudengite loodud projekt, mille eesmärk on ühendada disain, tehnoloogia ja koolivaib.
+          Tahame pakkuda kvaliteetseid ülikoolirõivaid ja aksessuaare, mis annavad igale tudengile võimaluse oma lugu kanda.
+        </p>
+      </section>
+
+      <section class="home-panel">
+        <h3 class="headline-tag">Meie missioon</h3>
+        <p class="lead">
+          Meie eesmärk on tuua tudengiteni taskukohane, mugav ja kvaliteetne ülikoolimerch. Kõik tooted on disainitud Eestis,
+          valmistatud keskkonda arvestades ning valitud nii, et need kestaksid kaua.
+        </p>
+        <p class="lead">
+          Idee algas Akadeemia tee 5 ühikast – mõttest koondada kõik, mida tudeng vajab, ühte mugavasse veebipoodi. Kõik vajalik vaid ühe kliki kaugusel.
+        </p>
+      </section>
+
+      <section class="home-panel">
+        <h3 class="headline-tag">Meie inimesed</h3>
+        <div class="team-grid">
+          <article class="card team-member">
+            <img src="anime1.jpg" alt="Tristan Aik Sild" class="team-member__photo">
+            <div>
+              <h3>Tristan Aik Sild</h3>
+              <p class="lead">Asutaja & Visionäär</p>
+              <p class="settings-hint">Suunab tootevalikut ja disainikeelt, et iga detail kõnetaks tudengeid.</p>
+            </div>
+          </article>
+          <article class="card team-member">
+            <img src="anime2.jpg" alt="Gustav Paul Tamkivi" class="team-member__photo">
+            <div>
+              <h3>Gustav Paul Tamkivi</h3>
+              <p class="lead">Operatsioonijuht (COO)</p>
+              <p class="settings-hint">Hoolitseb, et logistika, klienditugi ja partnerid toimiksid veatult.</p>
+            </div>
+          </article>
+          <article class="card team-member">
+            <img src="anime3.jpg" alt="Mihkel Anton" class="team-member__photo">
+            <div>
+              <h3>Mihkel Anton</h3>
+              <p class="lead">Turundus & Brändiarendus</p>
+              <p class="settings-hint">Viib 1stopshopi lugusid tudengiteni ning hoiab fookuses kogukonna tagasiside.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="home-panel">
+        <h3 class="headline-tag">Võta meiega ühendust</h3>
+        <p class="lead">Tagasiside ja ideed on alati oodatud – kirjuta meile või võta ühendust sotsiaalmeedias.</p>
+        <div class="contact-info-grid">
+          <article class="card contact-card">
+            <p class="lead">📧 E-post</p>
+            <a href="mailto:1stopshop@cool.com" class="contact-link">1stopshop@cool.com</a>
+          </article>
+          <article class="card contact-card">
+            <p class="lead">📸 Instagram</p>
+            <a href="https://instagram.com/1stopshopburner" target="_blank" rel="noreferrer" class="contact-link">@1stopshopburner</a>
+          </article>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section id="view-contacts" class="view">
+    <div class="container">
+      <div class="subhead">
+        <button class="back" data-back>← Tagasi</button>
+        <h2>Kontakt</h2>
+      </div>
+      <section class="home-panel hero">
+        <div class="home-hero">
+          <div class="shop-title">Võta ühendust</div>
+          <p class="lead">Küsimused? Kirjuta meile – vastame nii kiiresti kui võimalik.</p>
+        </div>
+      </section>
+
+      <section class="home-panel">
+        <div class="contact-grid">
+          <article class="card contact-card">
+            <h3>Meie kontaktid</h3>
+            <p><strong>E-post:</strong><br><a href="mailto:1stopshop@cool.com" class="contact-link">1stopshop@cool.com</a></p>
+            <p><strong>Instagram:</strong><br><a href="https://instagram.com/1stopshopburner" class="contact-link">@1stopshopburner</a></p>
+            <p><strong>Telefon:</strong><br>+372 5555 1234</p>
+            <p><strong>Aadress:</strong><br>Akadeemia tee 5, Tallinn 12611</p>
+          </article>
+
+          <article class="card contact-card">
+            <h3>Saada sõnum</h3>
+            <form id="inlineContactForm" class="inline-contact-form" novalidate>
+              <input type="text" name="name" placeholder="Sinu nimi" required>
+              <input type="email" name="email" placeholder="Sinu e-post" required>
+              <p class="form-error" data-error="email" hidden>Palun sisesta korrektne e-post.</p>
+              <textarea name="message" rows="4" placeholder="Sõnum" required></textarea>
+              <p class="form-error" data-error="message" hidden>Sõnum ei tohi olla tühi.</p>
+              <button type="submit" class="btn">Saada sõnum</button>
+            </form>
+          </article>
+        </div>
+      </section>
+
+      <section class="home-panel">
+        <h3 class="headline-tag">Asukoht</h3>
+        <p class="lead">Asume TalTechi vahetus läheduses.</p>
+        <div class="map-card">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2033.6525140384965!2d24.67130987728552!3d59.39654990344195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46929505c6ed1c0f%3A0xa1125453e5b769c!2sAkadeemia%20tee%205%2C%2012611%20Tallinn!5e0!3m2!1set!2see!4v1732570000000"
+            width="100%"
+            height="360"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        <div class="map-button-wrapper">
+          <a href="https://www.google.com/maps?q=59.3965499,24.6713098" target="_blank" rel="noreferrer" class="btn map-btn">📍 Ava Google Mapsis</a>
+        </div>
+      </section>
+      <div class="contact-toast" id="inlineContactToast" hidden>Sõnum on edastatud! 🎉</div>
     </div>
   </section>
 

@@ -10,15 +10,15 @@ import {
 const bodyEl = document.body;
 const views = {};
 const els = {};
+const shareableViews = new Set(['home', 'aboutus', 'contacts']);
 let firebaseProductsReady = false;
 function getFirebaseProductsService() {
   return firebaseProductsServiceInstance;
 }
 let unsubscribeProductListener = null;
-let galleryAnimationFrame = null;
-let galleryScrollPosition = 0;
 let currentUser = null;
 let currentUserIsAdmin = false;
+let inlineContactToastTimer = null;
 
 const currencyInfo = {
   EUR: { symbol: '€', rate: 1, locale: 'et-EE', currency: 'EUR' },
@@ -34,6 +34,8 @@ function cacheDom() {
   views.teated = document.getElementById('view-teated');
   views.ostukorv = document.getElementById('view-ostukorv');
   views.settings = document.getElementById('view-settings');
+  views.aboutus = document.getElementById('view-aboutus');
+  views.contacts = document.getElementById('view-contacts');
   views.admin = document.getElementById('view-admin');
 
   els.categoryList = document.getElementById('categoryList');
@@ -77,6 +79,9 @@ function cacheDom() {
   els.profileEmail = document.getElementById('profileEmail');
   els.authSignedOutLinks = document.querySelectorAll('[data-auth="signed-out"]');
   els.signOutBtn = document.getElementById('signOutBtn');
+  els.navViewLinks = document.querySelectorAll('[data-view-target]');
+  els.inlineContactForm = document.getElementById('inlineContactForm');
+  els.inlineContactToast = document.getElementById('inlineContactToast');
 }
 
 function normaliseProduct(product = {}) {
@@ -168,6 +173,49 @@ function getCategories() {
 
 function getCartCount() {
   return state.cart.reduce((total, item) => total + item.quantity, 0);
+}
+
+function setActiveNav(viewName) {
+  if (!els.navViewLinks?.length) return;
+  const normalized = viewName === 'welcome' ? 'home' : viewName;
+  els.navViewLinks.forEach((link) => {
+    const targetView = link.dataset.viewTarget;
+    if (!targetView) return;
+    link.classList.toggle('active', targetView === normalized);
+  });
+}
+
+function getInitialViewFromUrl() {
+  try {
+    const url = new URL(window.location.href);
+    const paramView = url.searchParams.get('view');
+    if (paramView && shareableViews.has(paramView)) {
+      return paramView;
+    }
+    const hashView = url.hash?.replace('#', '');
+    if (hashView && shareableViews.has(hashView)) {
+      return hashView;
+    }
+  } catch (error) {
+    console.warn('Failed to parse initial view from URL', error);
+  }
+  return 'home';
+}
+
+function updateShareableUrl(viewName) {
+  if (!window.history?.replaceState) return;
+  try {
+    const url = new URL(window.location.href);
+    if (viewName && shareableViews.has(viewName) && viewName !== 'home') {
+      url.searchParams.set('view', viewName);
+    } else {
+      url.searchParams.delete('view');
+    }
+    url.hash = '';
+    window.history.replaceState(null, '', url.toString());
+  } catch (error) {
+    console.warn('Failed to update URL for view', error);
+  }
 }
 
 function renderCategoryOptions() {
@@ -493,6 +541,23 @@ function updateQuickActionCartBadge() {
   }
 }
 
+function showInlineContactToast() {
+  const toast = els.inlineContactToast;
+  if (!toast) {
+    window.alert('Sõnum on edastatud! 🎉');
+    return;
+  }
+  toast.hidden = false;
+  toast.classList.add('visible');
+  window.clearTimeout(inlineContactToastTimer);
+  inlineContactToastTimer = window.setTimeout(() => {
+    toast.classList.remove('visible');
+    inlineContactToastTimer = window.setTimeout(() => {
+      toast.hidden = true;
+    }, 350);
+  }, 2600);
+}
+
 function renderStats() {
   if (!els.statsProducts) return;
   const products = state.products;
@@ -538,36 +603,20 @@ function renderGallery() {
   if (!gallery) return;
   gallery.innerHTML = '';
   if (!Array.isArray(state.products) || state.products.length === 0) return;
-  const productsLooped = [...state.products, ...state.products, ...state.products];
-  let rendered = 0;
-  productsLooped.forEach((product) => {
-    if (!product.image) return;
+  const baseProducts = state.products.filter((product) => Boolean(product.image));
+  if (baseProducts.length === 0) return;
+  const track = document.createElement('div');
+  track.className = 'scroll-gallery__track';
+  const loopedProducts = [...baseProducts, ...baseProducts];
+  loopedProducts.forEach((product) => {
     const img = document.createElement('img');
     img.src = product.image;
     img.alt = product.name || 'Toode';
-    gallery.append(img);
-    rendered += 1;
+    track.append(img);
   });
-  console.log('Gallery rendered with', rendered, 'images');
-
-  galleryScrollPosition = 0;
-  gallery.scrollLeft = 0;
-  if (galleryAnimationFrame) {
-    cancelAnimationFrame(galleryAnimationFrame);
-    galleryAnimationFrame = null;
-  }
-  const loopWidth = gallery.scrollWidth / 3 || gallery.scrollWidth;
-  const speed = 0.7;
-
-  const step = () => {
-    galleryScrollPosition += speed;
-    if (galleryScrollPosition >= loopWidth) {
-      galleryScrollPosition -= loopWidth;
-    }
-    gallery.scrollLeft = galleryScrollPosition;
-    galleryAnimationFrame = window.requestAnimationFrame(step);
-  };
-  galleryAnimationFrame = window.requestAnimationFrame(step);
+  const duration = Math.max(24, baseProducts.length * 3);
+  track.style.setProperty('--gallery-duration', `${duration}s`);
+  gallery.append(track);
 }
 
 function toggleSamplesDropdown(forceState) {
@@ -637,6 +686,12 @@ function showView(name) {
   const target = views[name] ?? views.home;
   if (!target) return;
   target.classList.add('active');
+  setActiveNav(name);
+  if (shareableViews.has(name)) {
+    updateShareableUrl(name);
+  } else if (name !== 'welcome') {
+    updateShareableUrl(null);
+  }
   if (name === 'ostukorv') {
     renderCart();
   }
@@ -750,6 +805,41 @@ function handleDocumentClick(event) {
   }
 }
 
+function handleInlineContactSubmit(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (!form) return;
+  const emailInput = form.querySelector('input[name="email"]');
+  const messageInput = form.querySelector('textarea[name="message"]');
+  const emailError = form.querySelector('[data-error="email"]');
+  const messageError = form.querySelector('[data-error="message"]');
+  const email = emailInput?.value.trim() ?? '';
+  const message = messageInput?.value.trim() ?? '';
+  let valid = true;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(email)) {
+    if (emailError) emailError.hidden = false;
+    valid = false;
+  } else if (emailError) {
+    emailError.hidden = true;
+  }
+
+  if (!message) {
+    if (messageError) messageError.hidden = false;
+    valid = false;
+  } else if (messageError) {
+    messageError.hidden = true;
+  }
+
+  if (!valid) return;
+
+  form.reset();
+  if (emailError) emailError.hidden = true;
+  if (messageError) messageError.hidden = true;
+  showInlineContactToast();
+}
+
 function populatePreferenceControls() {
   if (els.settingsLocation) els.settingsLocation.value = state.location;
   if (els.settingsCurrency) els.settingsCurrency.value = state.currency;
@@ -764,6 +854,14 @@ function populatePreferenceControls() {
 function bindUI() {
   document.querySelectorAll('[data-back]').forEach((button) => {
     button.addEventListener('click', () => showView('home'));
+  });
+  els.navViewLinks?.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const targetView = link.dataset.viewTarget;
+      if (!targetView) return;
+      showView(targetView);
+    });
   });
 
   els.productModalAdd?.addEventListener('click', () => {
@@ -837,7 +935,14 @@ function bindUI() {
   els.cartBtn?.addEventListener('click', () => showView('ostukorv'));
   els.sendLoginLink?.addEventListener('click', () => window.alert('Sisselogimislink on saadetud (demo).'));
   els.openHelp?.addEventListener('click', () => window.alert('Avaksime KKK lehe (demo).'));
-  els.reportIssue?.addEventListener('click', () => window.alert('Täname tagasiside eest! (demo)'));
+  els.reportIssue?.addEventListener('click', () => {
+    showView('contacts');
+    window.requestAnimationFrame(() => {
+      els.inlineContactForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const emailInput = els.inlineContactForm?.querySelector('input[name="email"]');
+      emailInput?.focus();
+    });
+  });
   els.signOutBtn?.addEventListener('click', async () => {
     try {
       await signOut(auth);
@@ -846,6 +951,7 @@ function bindUI() {
       window.alert('Väljalogimine ebaõnnestus. Palun proovi uuesti.');
     }
   });
+  els.inlineContactForm?.addEventListener('submit', handleInlineContactSubmit);
 
   els.adminProductForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -910,10 +1016,10 @@ function bindUI() {
   });
 }
 
-function startFlow() {
+function startFlow(nextView = 'home') {
   showView('welcome');
   clearTimeout(welcomeTimeout);
-  welcomeTimeout = window.setTimeout(() => showView('home'), 1600);
+  welcomeTimeout = window.setTimeout(() => showView(nextView), 1600);
 }
 
 function initialiseUi() {
@@ -923,7 +1029,9 @@ function initialiseUi() {
   renderEverything();
   bindUI();
   toggleSamplesDropdown(false);
-  startFlow();
+  const initialView = getInitialViewFromUrl();
+  startFlow(initialView);
+  setActiveNav(initialView);
   updateAuthUi();
 }
 
