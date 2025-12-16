@@ -2,7 +2,6 @@ import firebaseConfig from './firebase-config.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js';
 import {
   getFirestore,
-  connectFirestoreEmulator,
   collection,
   query,
   orderBy,
@@ -48,21 +47,9 @@ function sanitizeProduct(product = {}) {
   };
 }
 
-function shouldUseEmulator() {
-  return false;
-}
-
 function createFirebaseProductsService(database) {
-  let emulatorLinked = false;
-
   async function init() {
-    const activeDb = database;
-    maybeConnectEmulator(activeDb);
-    return activeDb;
-  }
-
-  function maybeConnectEmulator() {
-    return;
+    return database;
   }
 
   async function seedDemoProducts(products = []) {

@@ -117,8 +117,21 @@ body {
   gap: 16px;
   margin: 0;
 }
-.logo { font-weight: 800; letter-spacing: .3px; }
-.logo i { font-style: normal; color: var(--accent); }
+.logo {
+  font-weight: 800;
+  letter-spacing: .3px;
+  display: inline-flex;
+  gap: 2px;
+  align-items: baseline;
+  font-size: 1.05rem;
+}
+.logo__digit,
+.logo__shop {
+  color: var(--accent);
+}
+.logo__stop {
+  color: var(--text);
+}
 
 .headline-tag { opacity: .88; font-weight: 600; letter-spacing: .04em; font-size: .95rem; color: var(--muted); }
 .header-meta {
@@ -162,14 +175,6 @@ body {
   border-color: rgba(37,99,235,0.5);
   color: var(--accent);
   background: var(--hero-highlight);
-}
-.header-nav__link--button {
-  background: var(--surface-alt);
-  border: 1px solid transparent;
-  color: inherit;
-  font: inherit;
-  appearance: none;
-  padding: 6px 12px;
 }
 .header-actions {
   display: inline-flex;
@@ -248,6 +253,9 @@ body {
   margin: 0 0 20px;
   box-shadow: var(--panel-shadow);
   backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: homePanelIn .9s ease forwards;
 }
 .home-panel.hero { display: grid; gap: 14px; }
 .home-hero { display: grid; gap: 12px; text-align: center; }
@@ -401,9 +409,6 @@ body {
   display: inline-flex;
   gap: 10px;
   animation: scrollGallery var(--gallery-duration, 36s) linear infinite;
-}
-.scroll-gallery__track:hover {
-  animation-play-state: paused;
 }
 .scroll-gallery img {
   width: 150px;
@@ -705,35 +710,24 @@ map-btn {
     background: rgba(255, 255, 255, 0.10);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
-/* =========================
-   FAQ – 1stopshop native
-   ========================= */
+.home-panel:nth-of-type(1) { animation-delay: .15s; }
+.home-panel:nth-of-type(2) { animation-delay: .25s; }
+.home-panel:nth-of-type(3) { animation-delay: .35s; }
+.home-panel:nth-of-type(4) { animation-delay: .45s; }
+.home-panel:nth-of-type(5) { animation-delay: .55s; }
+.home-panel:nth-of-type(6) { animation-delay: .65s; }
+.home-panel:nth-of-type(7) { animation-delay: .75s; }
+.home-panel:nth-of-type(8) { animation-delay: .85s; }
+.home-panel:nth-of-type(9) { animation-delay: .95s; }
+.home-panel:nth-of-type(10) { animation-delay: 1.05s; }
 
-.faq-list {
-  display: grid;
-  gap: 16px;
-}
-
-.faq-item {
-  cursor: default;
-}
-
-.faq-item h3 {
-  margin: 0 0 6px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.faq-item p {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.55;
-}
-
-
-.faq-item p {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.55;
+@keyframes homePanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
