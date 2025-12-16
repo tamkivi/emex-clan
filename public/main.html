@@ -18,7 +18,11 @@
     <div class="container">
       <div class="sticky-header">
         <div class="header">
-          <div class="logo">1stop<i>shop</i></div>
+          <div class="logo" aria-label="1stopshop">
+            <span class="logo__digit">1</span>
+            <span class="logo__stop">stop</span>
+            <span class="logo__shop">shop</span>
+          </div>
           <nav class="header-meta">
             <ul class="header-nav">
               <li><a href="#" class="header-nav__link active" data-view-target="home">Avaleht</a></li>
@@ -26,7 +30,7 @@
               <li><a href="#" class="header-nav__link" data-view-target="contacts">Kontakt</a></li>
               <li><a href="signup.html" class="header-nav__link" data-auth="signed-out">Sign up</a></li>
               <li><a href="signin.html" class="header-nav__link" data-auth="signed-out">Sign in</a></li>
-              <li><button class="header-nav__link header-nav__link--button" id="signOutBtn" type="button" data-auth="signed-in" hidden>Logi välja</button></li>
+              <li><a href="#" class="header-nav__link" id="signOutBtn" data-auth="signed-in" hidden>Logi välja</a></li>
             </ul>
           </nav>
           <div class="header-meta">

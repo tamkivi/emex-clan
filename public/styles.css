@@ -117,8 +117,21 @@ body {
   gap: 16px;
   margin: 0;
 }
-.logo { font-weight: 800; letter-spacing: .3px; }
-.logo i { font-style: normal; color: var(--accent); }
+.logo {
+  font-weight: 800;
+  letter-spacing: .3px;
+  display: inline-flex;
+  gap: 2px;
+  align-items: baseline;
+  font-size: 1.05rem;
+}
+.logo__digit,
+.logo__shop {
+  color: var(--accent);
+}
+.logo__stop {
+  color: var(--text);
+}
 
 .headline-tag { opacity: .88; font-weight: 600; letter-spacing: .04em; font-size: .95rem; color: var(--muted); }
 .header-meta {
@@ -162,14 +175,6 @@ body {
   border-color: rgba(37,99,235,0.5);
   color: var(--accent);
   background: var(--hero-highlight);
-}
-.header-nav__link--button {
-  background: var(--surface-alt);
-  border: 1px solid transparent;
-  color: inherit;
-  font: inherit;
-  appearance: none;
-  padding: 6px 12px;
 }
 .header-actions {
   display: inline-flex;
@@ -401,9 +406,6 @@ body {
   display: inline-flex;
   gap: 10px;
   animation: scrollGallery var(--gallery-duration, 36s) linear infinite;
-}
-.scroll-gallery__track:hover {
-  animation-play-state: paused;
 }
 .scroll-gallery img {
   width: 150px;
