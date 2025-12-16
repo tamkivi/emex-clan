@@ -1,89 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="et">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KKK | 1stopshop</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-<section class="home-panel hero">
-  <div class="home-hero">
-    <div class="shop-title">KKK</div>
-    <p class="lead">
-      Vastused kõige sagedasematele küsimustele 1stopshopi kohta.
-    </p>
-  </div>
-</section>
 
-<section class="home-panel">
-  <h2 class="headline-tag">Üldine</h2>
+<body class="theme-dark">
+  <main class="view home active">
+    <div class="container">
 
-  <div class="card">
-    <h3>Mis on 1stopshop?</h3>
-    <p class="lead">
-      1stopshop on TalTech tudengite loodud veebipood, mis koondab tarvikuid kõikideks vajalikeks elujuhtumisteks.
-    </p>
-  </div>
+      <!-- NAVIGAATSIOON -->
+      <div class="sticky-header">
+        <div class="header">
 
-  <div class="card" style="margin-top:16px;">
-    <h3>Kellele on see pood mõeldud?</h3>
-    <p class="lead">
-      Peamiselt tudengitele, kuid sobib ka kõigile teistele, kes Bondi beachil toimunut põlastavad.
-    </p>
-  </div>
-</section>
+          <div class="logo">
+            <a href="index.html">1stop<i>shop</i></a>
+          </div>
 
-<section class="home-panel">
-  <h2 class="headline-tag">Tellimine & maksmine</h2>
+          <nav class="header-meta">
+            <ul class="header-actions" style="list-style:none; margin:0; padding:0; display:flex; gap:16px;">
+              <li><a href="index.html">Avaleht</a></li>
+              <li><a href="main.html">Pood</a></li>
+              <li><a href="aboutus.html">Meist</a></li>
+              <li><a href="faq.html" style="color:var(--accent); font-weight:600;">KKK</a></li>
+              <li><a href="contact.html">Kontakt</a></li>
+              <li><a href="signup.html">Sign up</a></li>
+              <li><a href="signin.html">Sign in</a></li>
+            </ul>
+          </nav>
 
-  <div class="card">
-    <h3>Kuidas tellimust esitada?</h3>
-    <p class="lead">
-      Vali toode, lisa ostukorvi ja liigu kassasse.
-    </p>
-  </div>
+          <div class="header-meta">
+            <div class="headline-tag">❓ KKK</div>
+          </div>
 
-  <div class="card" style="margin-top:16px;">
-    <h3>Milliseid makseviise toetate?</h3>
-    <p class="lead">
-      Pangalink, kaardimakse ja vajadusel arve.
-    </p>
-  </div>
-</section>
-<section class="home-panel">
-  <h2 class="headline-tag">Tarne & tagastus</h2>
+        </div>
+      </div>
 
-  <div class="card">
-    <h3>Kui kiiresti tellimus kohale jõuab?</h3>
-    <p class="lead">
-      Tavaliselt 3–7 tööpäeva.
-    </p>
-  </div>
+      <!-- HERO -->
+      <section class="home-panel hero">
+        <div class="home-hero">
+          <div class="shop-title">Korduma kippuvad küsimused</div>
+          <p class="lead">
+            Vastused kõige sagedasematele küsimustele 1stopshopi kohta.
+          </p>
+        </div>
+      </section>
 
-  <div class="card" style="margin-top:16px;">
-    <h3>Kas tooteid saab tagastada?</h3>
-    <p class="lead">
-      Jah, 14 päeva jooksul kasutamata kujul.
-    </p>
-  </div>
-</section>
+      <!-- 2. ÜLDINE -->
+      <section class="home-panel">
+        <h2 class="headline-tag">Üldine</h2>
 
-<section class="home-panel">
-  <h2 class="headline-tag">Kontakt</h2>
+        <div class="card">
+          <h3>Mis on 1stopshop?</h3>
+          <p class="lead">
+            1stopshop on tudengite loodud veebipood, mis koondab ülikoolimerchi ja aksessuaare ühte mugavasse keskkonda.
+          </p>
+        </div>
 
-  <div class="card">
-    <h3>Kuidas teiega ühendust võtta?</h3>
-    <p class="lead">
-      📧 <a href="mailto:1stopshop@cool.com" style="color:var(--accent);">
-        1stopshop@cool.com
-      </a><br>
-      📸 Instagram: <b>@1stopshopburner</b>
-    </p>
-  </div>
-</section>
+        <div class="card" style="margin-top:16px;">
+          <h3>Kellele see on mõeldud?</h3>
+          <p class="lead">
+            Meie tooted on mõeldud eelkõige tudengitele, kuid sobivad kõigile, kes hindavad minimalistlikku ja kvaliteetset disaini.
+          </p>
+        </div>
+      </section>
 
+      <!-- 3. TELLIMINE & MAKSMINE -->
+      <section class="home-panel">
+        <h2 class="headline-tag">Tellimine & maksmine</h2>
 
+        <div class="card">
+          <h3>Kuidas tellimust esitada?</h3>
+          <p class="lead">
+            Vali toode, lisa see ostukorvi ning liigu kassasse. Konto loomine ei ole kohustuslik,
+            kuid teeb tellimuste haldamise ja jälgimise mugavamaks.
+          </p>
+        </div>
 
+        <div class="card" style="margin-top:16px;">
+          <h3>Milliseid makseviise toetame?</h3>
+          <p class="lead">
+            Pakume pangalinki, kaardimakset ning vajadusel ka arvega tasumise võimalust.
+          </p>
+        </div>
+      </section>
 
+      <!-- 4. TARNE & TAGASTUS -->
+      <section class="home-panel">
+        <h2 class="headline-tag">Tarne & tagastus</h2>
 
+        <div class="card">
+          <h3>Kui kiiresti tellimus kohale jõuab?</h3>
+          <p class="lead">
+            Tellimused jõuavad tavaliselt kohale 3–7 tööpäeva jooksul, sõltuvalt tootest ja tarneviisist.
+          </p>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3>Kas tooteid saab tagastada?</h3>
+          <p class="lead">
+            Jah, sul on õigus tooted tagastada 14 päeva jooksul, kui need on kasutamata ja originaalpakendis.
+          </p>
+        </div>
+      </section>
+
+      <!-- 5. KONTAKT -->
+      <section class="home-panel">
+        <h2 class="headline-tag">Kontakt</h2>
+
+        <div class="card">
+          <h3>Kuidas teiega ühendust võtta?</h3>
+          <p class="lead">
+            📧 E-post:
+            <a href="mailto:1stopshop@cool.com" style="color:var(--accent);">
+              1stopshop@cool.com
+            </a>
+            <br><br>
+            📸 Instagram:
+            <a href="https://instagram.com/1stopshopburner" style="color:var(--accent);">
+              @1stopshopburner
+            </a>
+          </p>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer style="text-align:center; color:var(--muted); padding:40px 0;">
+        © 2025 1stopshop – Kõik õigused kaitstud
+      </footer>
+
+    </div>
+  </main>
 </body>
 </html>
