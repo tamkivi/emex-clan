@@ -1071,3 +1071,11 @@ onAuthStateChanged(auth, (user) => {
   currentUserIsAdmin = Boolean(user?.email && isAdminEmail(user.email));
   updateAuthUi();
 });
+
+const checkoutBtn = document.getElementById("checkout");
+
+if (checkoutBtn) {
+  checkoutBtn.addEventListener("click", () => {
+    window.location.href = "payment_method.html";
+  });
+}

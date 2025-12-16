@@ -272,3 +272,11 @@ body {
   --accent-2: #a78bfa;
   --hero-highlight: rgba(96, 165, 250, 0.18);
 }
+.remember {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.forgot-wrapper a {
+  font-size: 0.85rem;
+}
