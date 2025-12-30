@@ -132,6 +132,7 @@ const state = {
 
 let activeProductId = null;
 let welcomeTimeout;
+let isHandlingPopstate = false;
 
 function savePreferences() {
   localStorage.setItem('theme', state.theme);
@@ -224,10 +225,11 @@ function updateShareableUrl(viewName) {
       url.searchParams.delete('view');
     }
     url.hash = '';
-    window.history.replaceState(null, '', url.toString());
+    return url.toString();
   } catch (error) {
     console.warn('Failed to update URL for view', error);
   }
+  return null;
 }
 
 function renderCategoryOptions() {
@@ -695,7 +697,7 @@ async function subscribeToRemoteProducts() {
   }
 }
 
-function showView(name) {
+function showView(name, { pushHistory = true } = {}) {
   if (name === 'admin' && !currentUserIsAdmin) {
     console.warn('Attempted to open admin view without permissions');
     return;
@@ -705,10 +707,9 @@ function showView(name) {
   if (!target) return;
   target.classList.add('active');
   setActiveNav(name);
-  if (shareableViews.has(name)) {
-    updateShareableUrl(name);
-  } else if (name !== 'welcome') {
-    updateShareableUrl(null);
+  if (pushHistory && !isHandlingPopstate && name !== 'welcome') {
+    const url = updateShareableUrl(shareableViews.has(name) ? name : null) || window.location.href;
+    window.history.pushState({ view: name }, '', url);
   }
   if (name === 'ostukorv') {
     renderCart();
@@ -871,7 +872,13 @@ function populatePreferenceControls() {
 
 function bindUI() {
   document.querySelectorAll('[data-back]').forEach((button) => {
-    button.addEventListener('click', () => showView('home'));
+    button.addEventListener('click', () => {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        showView('home');
+      }
+    });
   });
   els.navViewLinks?.forEach((link) => {
     link.addEventListener('click', (event) => {
@@ -1035,7 +1042,7 @@ function bindUI() {
 }
 
 function startFlow(nextView = 'home') {
-  showView('welcome');
+  showView('welcome', { pushHistory: false });
   clearTimeout(welcomeTimeout);
   welcomeTimeout = window.setTimeout(() => showView(nextView), 2600);
 }
@@ -1048,6 +1055,10 @@ function initialiseUi() {
   bindUI();
   toggleSamplesDropdown(false);
   const initialView = getInitialViewFromUrl();
+  if (window.history?.replaceState) {
+    const url = updateShareableUrl(shareableViews.has(initialView) ? initialView : null) || window.location.href;
+    window.history.replaceState({ view: initialView }, '', url);
+  }
   startFlow(initialView);
   setActiveNav(initialView);
   updateAuthUi();
@@ -1069,6 +1080,14 @@ onAuthStateChanged(auth, (user) => {
   currentUser = user;
   currentUserIsAdmin = Boolean(user?.email && isAdminEmail(user.email));
   updateAuthUi();
+});
+
+window.addEventListener('popstate', (event) => {
+  const viewFromState = event.state?.view;
+  const nextView = viewFromState || getInitialViewFromUrl();
+  isHandlingPopstate = true;
+  showView(nextView, { pushHistory: false });
+  isHandlingPopstate = false;
 });
 
 const checkoutBtn = document.getElementById("checkout");
