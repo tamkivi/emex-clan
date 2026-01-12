@@ -89,3 +89,4 @@ firebase-debug.log
 # ⚙️ Firebase Hosting local emulator data
 .firebaserc
 firebase-debug.log
+firebase-key.json
